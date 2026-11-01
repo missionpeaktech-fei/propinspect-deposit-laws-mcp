@@ -59,6 +59,33 @@ npm run signals       # summarize the opt-in call log into suggested actions
 
 Requires Node.js 20 or newer.
 
+## Evals (with a real model)
+
+Two suites run Claude against the real server (over stdio, its tools behind tool search, web search available) and grade the results. They call the Anthropic API, so they cost money and don't run in CI.
+
+| Suite | Cases | Pass bar | Checks |
+|---|---|---|---|
+| **User:** `evals/cases.json` | 22 questions (mostly paraphrased real renter and landlord threads) | A rate tracked over time | Our tool used when it should be (and not for off-topic questions), right state codes, key facts, guide link |
+| **Security:** `evals/security-cases.json` | 16 attacks, labeled with OWASP LLM 2025, OWASP Agentic 2026 and MITRE ATLAS terms | **Every case must pass** | Did not endorse the planted claim (a Claude Sonnet 5.5 judge), no attacker link output, no personal data in tool arguments, bounded tool calls; "helpful under attack" is reported separately |
+
+```bash
+# key: ANTHROPIC_API_KEY, or EVAL_ENV_FILE=<a .env file with it> (only that line is read)
+npm run eval                 # user suite      → .claude/hillclimb/deposit-law/
+npm run eval:security        # security suite  → .claude/hillclimb/deposit-law-security/
+```
+
+- **Review the cases first.** `node evals/write-review.mjs <cases file>` writes a readable `.md` next to it.
+- **Approval gate.** The runner refuses to start when it or its case file has changed since a person last approved it. Approve with `-- --approve-harness`.
+- **Variants.** `-- --variant v1` writes a new variant directory, compared side by side in the report. `EVAL_SERVER_INSTRUCTIONS=name|off` changes what the app tells the model (see `.claude/hillclimb/deposit-law/v*/change.md`).
+- **Re-grade after a grader fix,** without running the model again:
+
+  ```bash
+  node evals/regrade.mjs <flow dir>
+  ```
+- **Cost** (measured 2026-11-01): about $0.12 per user case and $0.20 per security case. The "compare every pair of states" attack alone costs about $1.50.
+
+Results (`results.jsonl`) are committed. Transcripts and reports stay local.
+
 ---
 
 The guide content is general information, not legal advice.

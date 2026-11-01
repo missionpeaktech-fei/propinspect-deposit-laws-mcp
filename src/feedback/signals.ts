@@ -19,6 +19,7 @@ export interface Signals {
   faqRate?: number;
   comparisons: Array<[string, number]>;
   errors: number;
+  rejected: number;
   msP50?: number;
   msMax?: number;
   actions: string[];
@@ -53,7 +54,12 @@ export function summarize(entries: LoggedCall[], resolve: (code: string) => Reso
     actions.push(`${Math.round((withFaqs.length / lookups.length) * 100)}% of lookups needed FAQs (most: ${states}): questions go beyond the rules. Review those guides' FAQs for gaps.`);
   }
   const comparisons = countBy(entries.filter((e) => e.call === "compare_states").map((e) => [...e.states].sort().join("+")));
-  if (comparisons.length) actions.push(`${comparisons.length} different multi-state comparisons: landlords with rentals in several states. Worth a note for PropInspect positioning.`);
+  if (comparisons.length) {
+    const total = comparisons.reduce((n, [, count]) => n + count, 0);
+    actions.push(`${total} multi-state comparison${total === 1 ? "" : "s"} (${comparisons.length} different set${comparisons.length === 1 ? "" : "s"}): landlords with rentals in several states. Worth a note for PropInspect positioning.`);
+  }
+  const rejected = entries.filter((e) => e.status === "rejected");
+  if (rejected.length) actions.push(`${rejected.length} call${rejected.length === 1 ? " was" : "s were"} rejected at the input boundary (malformed or injected arguments): compare with the security eval, and check the tool descriptions if they keep coming.`);
   if (errors) actions.push(`${errors} handler error(s): read the server's stderr in the AI app's MCP log.`);
   const top = countBy(entries.flatMap((e) => e.states).filter((s) => resolve(s).kind === "covered")).slice(0, 5);
   if (top.length) actions.push(`Most asked: ${top.map(([s, n]) => `${s} (${n})`).join(", ")}. Keep these guides freshest; check their review dates first.`);
@@ -69,6 +75,7 @@ export function summarize(entries: LoggedCall[], resolve: (code: string) => Reso
     faqRate: lookups.length ? withFaqs.length / lookups.length : undefined,
     comparisons,
     errors,
+    rejected: entries.filter((e) => e.status === "rejected").length,
     msP50: ms.length ? ms[Math.floor(ms.length / 2)] : undefined,
     msMax: ms.length ? ms[ms.length - 1] : undefined,
     actions,

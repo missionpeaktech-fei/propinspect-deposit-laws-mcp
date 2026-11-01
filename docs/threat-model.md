@@ -56,7 +56,7 @@ We already use two other patterns from the paper:
 | 5 | **User-pasted text in the prompt → the model** | A third party (the landlord who wrote the letter) | Instructions hidden in the letter; closing the fence early | The letter is fenced as data, the rule comes before it, and fake `<letter>` tags are neutralized | `test/mcp.e2e.test.ts` |
 | 6 | npm packages → our code | Package authors | Supply-chain compromise | 2 direct runtime dependencies (MCP SDK, zod; 3 packages in total, none with install scripts), exact versions, lockfile, `npm ci` | CI |
 | 7 | Internet → remote server *(phase 2, not built)* | Anyone | Abuse, cost | Rate and size limits, stateless, read-only | — |
-| 8 | Our call log (opt-in) → whoever reads it | Us | The log becomes a store of user data; injected text forging log lines | Only codes, booleans, our status words and timings; JSON lines; path set by the operator, never the model; no free text ever (the letter, rejected input) | `test/feedback.test.ts` |
+| 8 | Our call log (opt-in) → whoever reads it | Us | The log becomes a store of user data; injected text forging log lines | Only codes, booleans, our status words and timings; JSON lines; path set by the operator, never the model; no free text ever (the letter, rejected input: rejected calls are logged as a count with the tool name only) | `test/feedback.test.ts` |
 
 ## The AI app's view: we are untrusted third-party code
 

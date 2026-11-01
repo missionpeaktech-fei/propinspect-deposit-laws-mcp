@@ -11,13 +11,17 @@ import { loadDepositLaws, SnapshotError } from "./data/load";
 import { createDepositLawCore } from "./core/depositLaws";
 import { createServer, SERVER_NAME, SERVER_VERSION } from "./mcp/server";
 import { fileCallLog, noCallLog } from "./mcp/callLog";
+import { withRejectionLog } from "./mcp/rejectionLog";
 
 try {
   const data = loadDepositLaws();
   // Opt-in usage log for the feedback loop. Set by whoever configures the server, never by the model.
   const logPath = process.env.DEPOSIT_LAWS_CALL_LOG;
-  const server = createServer(createDepositLawCore(data), logPath ? fileCallLog(logPath) : noCallLog);
-  await server.connect(new StdioServerTransport());
+  const log = logPath ? fileCallLog(logPath) : noCallLog;
+  const server = createServer(createDepositLawCore(data), log);
+  // Also count calls the input schema rejects (they never reach our handlers).
+  const toolNames = new Set(["get_deposit_rules", "compare_states", "list_covered_states"]);
+  await server.connect(logPath ? withRejectionLog(new StdioServerTransport(), log, toolNames) : new StdioServerTransport());
   console.error(
     `${SERVER_NAME} ${SERVER_VERSION}: ${data.meta.count} states from ${data.meta.source.commit.slice(0, 7)}, ready on stdio${logPath ? `, call log on` : ""}.`,
   );

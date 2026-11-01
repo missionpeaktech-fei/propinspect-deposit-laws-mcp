@@ -10,6 +10,7 @@ import { createDepositLawCore } from "../src/core/depositLaws";
 import { buildStateIndex } from "../src/core/resolveState";
 import { createServer } from "../src/mcp/server";
 import { fileCallLog } from "../src/mcp/callLog";
+import { withRejectionLog } from "../src/mcp/rejectionLog";
 import { summarize, type LoggedCall } from "../src/feedback/signals";
 
 const dir = mkdtempSync(join(tmpdir(), "deposit-law-log-"));
@@ -20,7 +21,9 @@ const SECRET = "Tenant Jane Doe, 12 Elm St, owes $400 for cleaning";
 
 before(async () => {
   const [clientSide, serverSide] = InMemoryTransport.createLinkedPair();
-  await createServer(createDepositLawCore(data), fileCallLog(logPath)).connect(serverSide);
+  const log = fileCallLog(logPath);
+  const tools = new Set(["get_deposit_rules", "compare_states", "list_covered_states"]);
+  await createServer(createDepositLawCore(data), log).connect(withRejectionLog(serverSide, log, tools));
   await client.connect(clientSide);
   await client.callTool({ name: "get_deposit_rules", arguments: { state: "nv" } });
   await client.callTool({ name: "get_deposit_rules", arguments: { state: "CA", include_faqs: true } });
@@ -46,6 +49,7 @@ test("each call becomes one line with codes and status only", () => {
       ["get_deposit_rules", "CA", "found"],
       ["get_deposit_rules", "DC", "not_covered"],
       ["compare_states", "CA+NV+PR", "partial"],
+      ["get_deposit_rules", "", "rejected"],
       ["prompt:check_deduction_letter", "NV", "found"],
     ],
   );
@@ -58,15 +62,17 @@ test("each call becomes one line with codes and status only", () => {
 test("the log holds no letter text and no rejected input", () => {
   const raw = readFileSync(logPath, "utf8");
   assert.ok(!raw.includes("Jane Doe") && !raw.includes("Elm St"), "letter text must not be logged");
-  assert.ok(!raw.includes("Ignore all previous"), "rejected input never reaches the handler or the log");
+  assert.ok(!raw.includes("Ignore all previous") && !raw.includes("Nevada."), "a rejected call is counted, but its arguments are never logged");
 });
 
 test("signals turn the log into suggested actions", () => {
   const s = summarize(entries(), buildStateIndex(data.byCode.values()));
-  assert.equal(s.calls, 5);
+  assert.equal(s.calls, 6);
+  assert.equal(s.rejected, 1);
+  assert.ok(s.actions.some((a) => a.startsWith("1 call was rejected at the input boundary")));
   assert.deepEqual(s.notCovered.map((g) => [g.code, g.meaning]), [["DC", "District of Columbia"], ["PR", "Puerto Rico"]]);
   assert.ok(s.actions.some((a) => a.startsWith("District of Columbia (DC) asked 1× but not covered")));
-  assert.ok(s.actions.some((a) => a.includes("multi-state comparisons")));
+  assert.ok(s.actions.some((a) => a.startsWith("1 multi-state comparison (1 different set)")));
   assert.ok(s.actions.some((a) => a.startsWith("Most asked: NV (3)")));
 });
 

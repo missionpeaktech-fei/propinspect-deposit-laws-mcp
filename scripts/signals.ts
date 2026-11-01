@@ -38,5 +38,6 @@ console.log(`Not covered:    ${s.notCovered.map((g) => `${g.code} ${g.count} (${
 console.log(`FAQ requests:   ${pct(s.faqRate)} of lookups`);
 console.log(`Comparisons:    ${s.comparisons.map(([set, n]) => `${set} ${n}`).join(", ") || "none"}`);
 console.log(`Errors:         ${s.errors}`);
+console.log(`Rejected:       ${s.rejected} (input refused at the schema boundary)`);
 console.log(`Speed:          median ${s.msP50 ?? "-"} ms, max ${s.msMax ?? "-"} ms`);
 console.log(`\nSuggested actions:\n${s.actions.map((a) => `- ${a}`).join("\n") || "- none yet: use the server more."}`);

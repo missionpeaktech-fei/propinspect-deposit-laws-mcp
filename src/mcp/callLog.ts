@@ -12,7 +12,7 @@ import { randomUUID } from "node:crypto";
  * no entry can forge another.
  */
 
-export type CallStatus = "found" | "not_covered" | "partial" | "error";
+export type CallStatus = "found" | "not_covered" | "partial" | "error" | "rejected";
 
 export interface CallEntry {
   /** Which tool, prompt or resource. */
