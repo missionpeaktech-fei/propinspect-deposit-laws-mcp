@@ -2,14 +2,14 @@
 
 A read-only [MCP](https://modelcontextprotocol.io) server that gives AI assistants exact, cited security-deposit law facts for all 50 US states, taken from [PropInspect's reviewed state guides](https://propinspect.net/security-deposit-laws).
 
-**Status:** in development; not published. Data layer done; MCP tools come next.
+**Status:** in development; not published. Data and core layers done; MCP tools come next.
 
 ## How it's built
 
 | Layer | Where | What it does |
 |---|---|---|
 | Data | `data/deposit-laws.json`, `src/data/` | A facts-only snapshot exported from the PropInspect app, validated at startup (schema + exactly the 50 states) |
-| Core | `src/core/` *(next)* | Plain functions: look up, compare, list. No MCP. |
+| Core | `src/core/` | Plain functions: look up, compare, list. No MCP, no I/O. Every answer carries its citation; inputs are resolved through a fixed index and never echoed back. |
 | MCP | `src/mcp/` *(next)* | Tools, resources and a prompt that describe the core to a model |
 | Transport | `src/index.ts` *(next)* | stdio first; Streamable HTTP later |
 
