@@ -60,9 +60,13 @@ export async function setup() {
   ];
   // Assumption (stated in the case review): the app passes the server's
   // instructions to the model. Claude Desktop's exact behavior is unconfirmed.
-  // EVAL_SERVER_INSTRUCTIONS=off: A/B variant with no system prompt, so only
-  // the tool descriptions guide the model (some apps don't pass instructions on).
-  const system = process.env.EVAL_SERVER_INSTRUCTIONS === 'off' ? undefined
+  // EVAL_SERVER_INSTRUCTIONS selects what the app tells the model (A/B variants):
+  //   (default) the server's name and its instructions
+  //   name      only that the server is connected (no instructions)
+  //   off       nothing: no system prompt, only the tool descriptions
+  const mode = process.env.EVAL_SERVER_INSTRUCTIONS ?? 'full';
+  const system = mode === 'off' ? undefined
+    : mode === 'name' ? `The user has connected these MCP servers: ${SERVER} (${mcp.getServerVersion?.()?.title ?? SERVER}).`
     : `The user has connected these MCP servers. Their instructions:\n\n<server name="${SERVER}">\n${instructions}\n</server>`;
   shared = { mcp, api: new Anthropic(), apiTools, system };
   return shared;
