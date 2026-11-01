@@ -1,35 +1,67 @@
 # propinspect-deposit-laws-mcp
 
-A read-only [MCP](https://modelcontextprotocol.io) server that gives AI assistants exact, cited security-deposit law facts for all 50 US states, taken from [PropInspect's reviewed state guides](https://propinspect.net/security-deposit-laws).
+A read-only [MCP](https://modelcontextprotocol.io) server that gives AI assistants exact, cited security-deposit law facts for all 50 US states. The facts come from [PropInspect's reviewed state guides](https://propinspect.net/security-deposit-laws).
 
-**Status:** in development; not published. Data and core layers done; MCP tools come next.
+**Status:** in development; not published. Works locally over stdio.
+
+## What it offers
+
+The full contract (tools, inputs, outputs, resources and prompts, exactly as a model sees them) is in **[docs/CONTRACT.md](docs/CONTRACT.md)**. In short:
+
+- **`get_deposit_rules`**: one state's cap, return deadline, penalty and move-in record rule, with the guide link, review date, statute and disclaimer.
+- **`compare_states`**: 2–6 states side by side.
+- **`list_covered_states`**: every covered state with its guide link and review date.
+- **Resource** `deposit-law://state/{code}`: one state as JSON.
+- **Prompt** `check_deduction_letter`: check a deposit deduction letter against a state's rules.
+
+## Try it
+
+```bash
+npm ci
+npm run inspect      # opens the MCP Inspector in your browser to call the tools by hand
+```
+
+To use it in Claude Desktop, add this to `claude_desktop_config.json` (Settings → Developer → Edit Config), with your path:
+
+```json
+{
+  "mcpServers": {
+    "propinspect-deposit-laws": {
+      "command": "npx",
+      "args": ["tsx", "/path/to/propinspect-deposit-laws-mcp/src/index.ts"]
+    }
+  }
+}
+```
+
+In Claude Code:
+
+```bash
+claude mcp add propinspect-deposit-laws -- npx tsx /path/to/propinspect-deposit-laws-mcp/src/index.ts
+```
 
 ## How it's built
 
 | Layer | Where | What it does |
 |---|---|---|
-| Data | `data/deposit-laws.json`, `src/data/` | A facts-only snapshot exported from the PropInspect app, validated at startup (schema + exactly the 50 states) |
-| Core | `src/core/` | Plain functions: look up, compare, list. No MCP, no I/O. Every answer carries its citation; inputs are resolved through a fixed index and never echoed back. |
-| MCP | `src/mcp/` *(next)* | Tools, resources and a prompt that describe the core to a model |
-| Transport | `src/index.ts` *(next)* | stdio first; Streamable HTTP later |
+| Data | `data/deposit-laws.json`, `src/data/` | A facts-only snapshot exported from the PropInspect app, validated at startup (schema + exactly the covered states) |
+| Core | `src/core/` | Plain functions: look up, compare, list. No MCP, no I/O. Every answer carries its citation. |
+| MCP | `src/mcp/server.ts` | Tools, a resource and a prompt that describe the core to a model; input shape checked here |
+| Transport | `src/index.ts` | stdio (logs to stderr only); Streamable HTTP later |
 
-Design decisions are recorded in [`docs/decisions/`](docs/decisions/).
+Design decisions: [docs/decisions/](docs/decisions/). Security: [docs/threat-model.md](docs/threat-model.md).
 
-## Data pipeline
-
-The PropInspect app is the single source of truth. This project holds a generated copy that nobody edits by hand.
+## Development
 
 ```bash
-npm run export-data   # rebuild data/deposit-laws.json from the app's origin/main
-npm run check-data    # exit 1 if the snapshot has drifted from the source
-npm test              # loader contract tests
+npm test              # unit, contract and protocol end-to-end tests
+npm run typecheck
+npm run contract      # regenerate docs/CONTRACT.md after changing a tool (CI checks it)
+npm run export-data   # rebuild the snapshot from the PropInspect app (needs access to it)
+npm run check-data    # exit 1 if the snapshot has drifted from the app
 ```
 
-The snapshot records the source commit it was built from. Every state carries its guide URL, review date, statute and disclaimer.
-
-## Requirements
-
-Node.js 20 or newer.
+Requires Node.js 20 or newer.
 
 ---
 

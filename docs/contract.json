@@ -1,0 +1,452 @@
+{
+  "server": {
+    "name": "propinspect-deposit-laws",
+    "title": "PropInspect Deposit Laws",
+    "version": "0.1.0",
+    "instructions": "Answers US security deposit questions (caps, return deadlines, penalties, move-in records) from PropInspect's reviewed guides for the 50 states. Answer only from tool results, never from memory. Always give the guide link and its review date, and say it is general information, not legal advice. If a tool says a place is not covered, tell the user plainly instead of guessing."
+  },
+  "tools": [
+    {
+      "name": "get_deposit_rules",
+      "title": "Get a state's security deposit rules",
+      "description": "Use when the user asks about security deposit rules in one US state: the deposit cap, the deadline to return it or send an itemized list, the penalty for wrongful withholding, or move-in condition records. Pass the two-letter state code (Nevada → NV). Returns the rules with a citation (guide link, review date, statute, disclaimer). If status is \"not_covered\", tell the user the place is not covered; do not answer from memory. Set include_faqs to true only when the user's question goes beyond the rules (for example cleaning, painting or normal wear and tear).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "pattern": "^[A-Za-z]{2}$",
+            "description": "Two-letter US state code, e.g. \"NV\" for Nevada or \"NY\" for New York."
+          },
+          "include_faqs": {
+            "description": "Also return the guide's FAQ answers. Default false.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "state"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "found",
+              "not_covered"
+            ]
+          },
+          "stateCode": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "rules": {
+            "type": "object",
+            "properties": {
+              "depositCap": {
+                "type": "string"
+              },
+              "returnDeadline": {
+                "type": "string"
+              },
+              "wrongfulWithholdingPenalty": {
+                "type": "string"
+              },
+              "moveInRecordRule": {
+                "type": "string"
+              },
+              "scope": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "depositCap",
+              "returnDeadline",
+              "wrongfulWithholdingPenalty",
+              "moveInRecordRule"
+            ],
+            "additionalProperties": false
+          },
+          "summary": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "rule": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "label",
+                "rule"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "label",
+                "url",
+                "type"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "faqs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "question": {
+                  "type": "string"
+                },
+                "answer": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "question",
+                "answer"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "citation": {
+            "type": "object",
+            "properties": {
+              "guideUrl": {
+                "type": "string"
+              },
+              "lastReviewed": {
+                "type": "string",
+                "description": "ISO date of the last review against the official sources"
+              },
+              "statute": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "url"
+                ],
+                "additionalProperties": false
+              },
+              "disclaimer": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "guideUrl",
+              "lastReviewed",
+              "statute",
+              "disclaimer"
+            ],
+            "additionalProperties": false
+          },
+          "reason": {
+            "type": "string"
+          },
+          "coveredStateCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Get deposit rules",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "compare_states",
+      "title": "Compare security deposit rules across states",
+      "description": "Use when the user wants to compare security deposit rules between 2 to 6 US states (for example a landlord with rentals in several states). Pass two-letter state codes. Returns one row per state with its own citation; places that are not covered are listed by their position in the input.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "states": {
+            "minItems": 2,
+            "maxItems": 6,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z]{2}$",
+              "description": "Two-letter US state code, e.g. \"NV\" for Nevada or \"NY\" for New York."
+            },
+            "description": "2 to 6 two-letter state codes, e.g. [\"CA\", \"NV\"]."
+          }
+        },
+        "required": [
+          "states"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "stateCode": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string"
+                },
+                "rules": {
+                  "type": "object",
+                  "properties": {
+                    "depositCap": {
+                      "type": "string"
+                    },
+                    "returnDeadline": {
+                      "type": "string"
+                    },
+                    "wrongfulWithholdingPenalty": {
+                      "type": "string"
+                    },
+                    "moveInRecordRule": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "depositCap",
+                    "returnDeadline",
+                    "wrongfulWithholdingPenalty",
+                    "moveInRecordRule"
+                  ],
+                  "additionalProperties": false
+                },
+                "citation": {
+                  "type": "object",
+                  "properties": {
+                    "guideUrl": {
+                      "type": "string"
+                    },
+                    "lastReviewed": {
+                      "type": "string",
+                      "description": "ISO date of the last review against the official sources"
+                    },
+                    "statute": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "url"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "guideUrl",
+                    "lastReviewed",
+                    "statute",
+                    "disclaimer"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "stateCode",
+                "state",
+                "rules",
+                "citation"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "notCovered": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "position": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "reason": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "position",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "rows",
+          "notCovered"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Compare states",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_covered_states",
+      "title": "List the states this server covers",
+      "description": "Use when the user asks which states are covered, or before comparing many states. Returns every covered state with its guide link and review date.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "reviewedBetween": {
+            "type": "object",
+            "properties": {
+              "oldest": {
+                "type": "string"
+              },
+              "newest": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "oldest",
+              "newest"
+            ],
+            "additionalProperties": false
+          },
+          "states": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "stateCode": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string"
+                },
+                "guideUrl": {
+                  "type": "string"
+                },
+                "lastReviewed": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "stateCode",
+                "state",
+                "guideUrl",
+                "lastReviewed"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "count",
+          "reviewedBetween",
+          "states"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "List covered states",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  ],
+  "resourceTemplates": [
+    {
+      "name": "state-deposit-law",
+      "title": "State security deposit law",
+      "uriTemplate": "deposit-law://state/{code}",
+      "description": "One state's deposit rules, summary, references, FAQs and citation, as JSON.",
+      "mimeType": "application/json"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "check_deduction_letter",
+      "title": "Check a deposit deduction letter",
+      "description": "Check a landlord's security deposit deduction letter against one state's rules.",
+      "arguments": [
+        {
+          "name": "state",
+          "description": "Two-letter US state code, e.g. \"NV\" for Nevada or \"NY\" for New York.",
+          "required": true
+        },
+        {
+          "name": "letter",
+          "description": "The deduction letter or itemized list, pasted as text.",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

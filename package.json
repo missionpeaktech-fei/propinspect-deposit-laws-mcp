@@ -11,13 +11,18 @@
     "export-data": "tsx scripts/export-data.ts",
     "check-data": "tsx scripts/export-data.ts --check",
     "test": "tsx --test test/*.test.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "contract": "tsx scripts/contract.ts",
+    "contract:check": "tsx scripts/contract.ts --check",
+    "start": "tsx src/index.ts",
+    "inspect": "npx -y @modelcontextprotocol/inspector@2.13.0 npx tsx src/index.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.4.0",
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@modelcontextprotocol/client": "2.4.0",
     "@types/node": "22.20.5",
     "tsx": "4.23.15",
     "typescript": "7.0.2"
