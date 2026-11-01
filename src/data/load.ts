@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { SnapshotSchema, type Snapshot, type StateFacts } from "./schema";
-import { US_STATE_CODES } from "./usStates";
+import { COVERED_STATE_CODES } from "./coverage";
 
 export const DEFAULT_SNAPSHOT_PATH = fileURLToPath(new URL("../../data/deposit-laws.json", import.meta.url));
 
@@ -43,11 +43,11 @@ export function validateSnapshot(raw: unknown): DepositLawData {
     byCode.set(facts.stateCode, facts);
   }
 
-  const expected = new Set<string>(US_STATE_CODES);
-  const missing = US_STATE_CODES.filter((code) => !byCode.has(code));
+  const expected = new Set<string>(COVERED_STATE_CODES);
+  const missing = COVERED_STATE_CODES.filter((code) => !byCode.has(code));
   const unexpected = [...byCode.keys()].filter((code) => !expected.has(code));
   if (missing.length) problems.push(`missing states: ${missing.join(", ")}`);
-  if (unexpected.length) problems.push(`not US state codes: ${unexpected.join(", ")}`);
+  if (unexpected.length) problems.push(`not covered by this server: ${unexpected.join(", ")}`);
 
   if (problems.length) throw new SnapshotError(problems);
   return { meta, byCode };

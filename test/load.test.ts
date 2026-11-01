@@ -52,6 +52,13 @@ test("a snapshot missing a state is rejected and names the state", () => {
   assert.deepEqual(problemsFor(snapshot), ["missing states: NY"]);
 });
 
+test("a jurisdiction outside the covered list is rejected until we decide to cover it", () => {
+  const snapshot = real();
+  snapshot.states.push({ ...snapshot.states[0]!, state: "District of Columbia", stateCode: "DC", slug: "district-of-columbia" });
+  snapshot.count = snapshot.states.length;
+  assert.deepEqual(problemsFor(snapshot), ["not covered by this server: DC"]);
+});
+
 test("a duplicated state is rejected", () => {
   const snapshot = real();
   snapshot.states[1] = { ...snapshot.states[0]! };

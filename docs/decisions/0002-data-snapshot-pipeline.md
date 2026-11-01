@@ -21,7 +21,7 @@ The guide data lives in the PropInspect app as one typed TypeScript file. This s
 Source + export pipeline → snapshot, with these rules:
 
 1. **Generated, never edited by hand.** `npm run export-data` reads the source **from a git commit**, not the working copy, and records that commit in the snapshot.
-2. **One contract, checked on both sides.** The export validates against `src/data/schema.ts` before writing. The server validates again at startup and refuses to start unless the snapshot has exactly the 50 US states.
+2. **One contract, checked on both sides.** The export validates against `src/data/schema.ts` before writing. The server validates again at startup and refuses to start unless the snapshot has exactly the 50 covered states (src/data/coverage.ts).
 3. **Drift is detectable.** `npm run check-data` exits 1 and lists the states that differ from the source.
 4. **One format per field.** The source writes review dates two ways ("2026-09-18" and "September 18, 2026"). The snapshot stores ISO dates only, and the schema rejects anything else. The disclaimer uses the website's footer template, with "this guide" instead of "this page", since an answer cites the guide.
 5. **Facts only.** Caps, deadlines, penalties, move-in record rules, summary, statute, references, FAQs, guide URL and disclaimer. The long-form guide text stays on propinspect.net, and answers link there.
