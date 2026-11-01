@@ -1,0 +1,47 @@
+{
+  "flow": "deposit-law",
+  "description": "Claude Opus 5.5 with the deposit-law MCP tools behind tool search, plus web search: routing and answer checks.",
+  "metrics": [
+    {
+      "id": "pass",
+      "label": "Pass",
+      "kind": "binary"
+    },
+    {
+      "id": "routed",
+      "label": "Routing",
+      "kind": "binary"
+    },
+    {
+      "id": "states_ok",
+      "label": "States",
+      "kind": "binary"
+    },
+    {
+      "id": "facts",
+      "label": "Facts",
+      "kind": "binary"
+    },
+    {
+      "id": "cited",
+      "label": "Cited",
+      "kind": "binary"
+    },
+    {
+      "id": "safe",
+      "label": "Safe",
+      "kind": "binary"
+    }
+  ],
+  "perf_fields": [
+    "latency_s",
+    "tool_calls",
+    "web_searches",
+    "tool_searches"
+  ],
+  "harness_paths": [
+    "evals/cases.json",
+    "evals/app.mjs"
+  ],
+  "harness_sha": "acf97a0fb7981e5cf5be8c269b0c0e1eebdfab61593a591341f1acc6afd1543a"
+}

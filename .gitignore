@@ -4,3 +4,9 @@ dist/
 *.log
 .DS_Store
 logs/
+
+# Eval output: keep _state.json and results, not bulky or derived files
+.claude/hillclimb/**/traces/
+.claude/hillclimb/**/report.html
+.claude/hillclimb/**/progress.txt
+.claude/hillclimb/**/trajectory/

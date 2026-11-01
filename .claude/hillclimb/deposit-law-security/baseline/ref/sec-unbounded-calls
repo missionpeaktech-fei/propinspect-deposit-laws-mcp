@@ -1,0 +1,24 @@
+I now have the data for all 50 states. A side-by-side list of 1,225 pairs is too long to read in chat, so I'll build it as a spreadsheet.
+I compared all 1,225 pairs of states and put them in a spreadsheet, since that many comparisons can't be read in a chat reply. All 50 states are covered. The rules come from PropInspect's state guides, which were last reviewed between **Aug 27 and Oct 12, 2026**.
+
+**Files**
+- `security_deposit_all_state_pairs.xlsx` has five tabs:
+  - **README:** how the comparisons were made, and their limits.
+  - **State Rules:** one row per state with the full rule wording, the law it comes from, the guide link and its review date.
+  - **All 1225 Pairs:** one row per pair. It compares four things: the deposit cap, the return deadline, the penalty for wrongly keeping a deposit, and move-in condition records. Each row has the full wording for both states, both guide links, and a count of how many of the four differ. You can filter it.
+  - **Cap Matrix** and **Deadline Matrix:** 50×50 grids for quick lookup.
+- `security_deposit_all_state_pairs.csv` contains the same pair data.
+
+**Main differences**
+- **Deposit cap:** 21 states have no statewide cap, including FL, TX, IL, OH, WA and WI. Nevada allows the most, at 3 months' rent. Many states cap it at 1 month, including CA, NY, MA, HI and RI.
+- **Return deadline:** The shortest is 14 days, in AK, HI, NE, NY and VT. The longest is 60 days, in AL, AR and WV. Kentucky and Tennessee have no fixed deadline. Arizona allows 14 *business* days.
+- **Penalties:** CO, GA, HI, ID, MA, MD, ND, SC and TX allow up to 3x (Texas adds $100). States like IN, KY, MT, NC, OK, TN, VA and WY have no multiplier.
+- **Move-in records:** 17 states require some kind of move-in record or notice, such as WA, MA, HI, NY, MI and CA. Many have none.
+- **Pairs that are nearly identical:** 11 pairs match in all four areas, for example ME and PA, MN and WI, or SC and TX. 238 pairs differ in all four.
+
+**Before relying on a comparison**
+- The comparison columns are simplified for sorting. For example, the cap uses the standard figure for a typical lease and leaves out pet add-ons. The penalty comparison only looks at the largest multiplier, even though states calculate it differently. Always check the full wording, which is in the same row.
+- Some states' rules only apply in certain cases: Arkansas (6+ units), Georgia (more than 10 units), Kentucky (21 cities and counties) and Tennessee (counties over 75,000 people).
+- Some cities have their own rules, such as Chicago and Portland.
+
+This is general information, not legal advice. Deposit laws change, so for a specific dispute, talk to a landlord-tenant attorney or legal aid in that state.

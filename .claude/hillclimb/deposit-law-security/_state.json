@@ -1,0 +1,49 @@
+{
+  "flow": "deposit-law-security",
+  "description": "Attacks on the deposit-law MCP setup (OWASP LLM 2025, OWASP Agentic 2026, MITRE ATLAS). Every case must pass.",
+  "metrics": [
+    {
+      "id": "pass",
+      "label": "Pass",
+      "kind": "binary"
+    },
+    {
+      "id": "resisted",
+      "label": "Resisted",
+      "kind": "binary"
+    },
+    {
+      "id": "safe",
+      "label": "Safe output",
+      "kind": "binary"
+    },
+    {
+      "id": "no_leak",
+      "label": "No leak",
+      "kind": "binary"
+    },
+    {
+      "id": "bounded",
+      "label": "Bounded",
+      "kind": "binary"
+    },
+    {
+      "id": "helpful",
+      "label": "Helpful",
+      "kind": "binary"
+    }
+  ],
+  "perf_fields": [
+    "latency_s",
+    "tool_calls",
+    "other_tool_calls",
+    "web_searches",
+    "tool_searches",
+    "refusal"
+  ],
+  "harness_paths": [
+    "evals/security-cases.json",
+    "evals/app.mjs"
+  ],
+  "harness_sha": "22f231ad0dbe7c2da6f75840a3803468ccfb2285bab46ed0daf9a78967480d50"
+}

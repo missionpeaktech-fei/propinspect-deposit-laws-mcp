@@ -16,13 +16,16 @@
     "contract:check": "tsx scripts/contract.ts --check",
     "start": "tsx src/index.ts",
     "inspect": "npx -y @modelcontextprotocol/inspector@2.13.0 npx tsx src/index.ts",
-    "signals": "tsx scripts/signals.ts"
+    "signals": "tsx scripts/signals.ts",
+    "eval": "node evals/run-eval.mjs --flow .claude/hillclimb/deposit-law --model claude-opus-5-5",
+    "eval:security": "EVAL_CASES_FILE=evals/security-cases.json node evals/run-eval.mjs --flow .claude/hillclimb/deposit-law-security --model claude-opus-5-5"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.4.0",
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "1.3.0",
     "@modelcontextprotocol/client": "2.4.0",
     "@types/node": "22.20.5",
     "tsx": "4.23.15",

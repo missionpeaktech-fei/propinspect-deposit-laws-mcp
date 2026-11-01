@@ -1,0 +1,468 @@
+[
+  {
+    "id": "nv-plain",
+    "tags": [
+      "routing-plain",
+      "chat-test"
+    ],
+    "prompt": "How long does a Nevada landlord have to return a security deposit?",
+    "expect": {
+      "tool": "deposit",
+      "states": [
+        "NV"
+      ],
+      "must": [
+        "30 days"
+      ],
+      "cite": [
+        "nevada"
+      ]
+    },
+    "meta": {
+      "source": "Owner's Claude Desktop test 2026-11-01 (went to web search)"
+    }
+  },
+  {
+    "id": "nv-hint",
+    "tags": [
+      "routing-hint",
+      "chat-test"
+    ],
+    "prompt": "Check PropInspect's guide: how long does a Nevada landlord have to return a deposit?",
+    "expect": {
+      "tool": "deposit",
+      "states": [
+        "NV"
+      ],
+      "must": [
+        "30 days"
+      ],
+      "cite": [
+        "nevada"
+      ]
+    },
+    "meta": {
+      "source": "Owner's Claude Desktop test 2026-11-01 (used our tool)"
+    }
+  },
+  {
+    "id": "ca-cap",
+    "tags": [
+      "routing-plain",
+      "handwritten"
+    ],
+    "prompt": "What's the most a landlord in California can charge for a security deposit?",
+    "expect": {
+      "tool": "deposit",
+      "states": [
+        "CA"
+      ],
+      "must": [
+        "(1|one) month"
+      ],
+      "cite": [
+        "california"
+      ]
+    }
+  },
+  {
+    "id": "ny-brooklyn",
+    "tags": [
+      "routing-plain",
+      "reddit"
+    ],
+    "prompt": "We moved out of our Brooklyn apartment at the end of August and the landlord still hasn't returned our security deposit. How long did they have under New York law?",
+    "expect": {
+      "tool": "deposit",
+      "states": [
+        "NY"
+      ],
+      "must": [
+        "14 days"
+      ],
+      "cite": [
+        "new-york"
+      ]
+    },
+    "meta": {
+      "source": "Paraphrased from r/Renters (NYC, deposit not returned after ~2 months)"
+    }
+  },
+  {
+    "id": "tx-bad-faith",
+    "tags": [
+      "routing-plain",
+      "handwritten"
+    ],
+    "prompt": "In Texas, what can a tenant recover if the landlord keeps the deposit in bad faith?",
+    "expect": {
+      "tool": "deposit",
+      "states": [
+        "TX"
+      ],
+      "must": [
+        "\\$100",
+        "(3x|3 times|three times|triple|treble)"
+      ],
+      "cite": [
+        "texas"
+      ]
+    }
+  },
+  {
+    "id": "fl-notice",
+    "tags": [
+      "routing-plain",
+      "reddit"
+    ],
+    "prompt": "My Florida landlord says he's keeping my whole deposit. How long did he have to notify me that he was making a claim on it?",
+    "expect": {
+      "tool": "deposit",
+      "states": [
+        "FL"
+      ],
+      "must": [
+        "30 days"
+      ],
+      "cite": [
+        "florida"
+      ]
+    },
+    "meta": {
+      "source": "Paraphrased from r/Renters (FL, landlord keeping deposit plus last month)"
+    }
+  },
+  {
+    "id": "va-norfolk",
+    "tags": [
+      "routing-plain",
+      "reddit"
+    ],
+    "prompt": "I'm renting in Norfolk, Virginia and moving out soon. How long will my landlord have to return my deposit?",
+    "expect": {
+      "tool": "deposit",
+      "states": [
+        "VA"
+      ],
+      "must": [
+        "45 days"
+      ],
+      "cite": [
+        "virginia"
+      ]
+    },
+    "meta": {
+      "source": "Paraphrased from r/Renters (Norfolk, VA)"
+    }
+  },
+  {
+    "id": "wa-checklist",
+    "tags": [
+      "routing-plain",
+      "reddit"
+    ],
+    "prompt": "I just moved into a rental in Washington state. Does the landlord have to give me a move-in condition checklist before charging a deposit?",
+    "expect": {
+      "tool": "deposit",
+      "states": [
+        "WA"
+      ],
+      "must": [
+        "checklist"
+      ],
+      "cite": [
+        "washington"
+      ]
+    },
+    "meta": {
+      "source": "Paraphrased from r/Renters (WA move-in inspection report)"
+    }
+  },
+  {
+    "id": "mi-address",
+    "tags": [
+      "routing-plain",
+      "reddit"
+    ],
+    "prompt": "We moved out of a rental house in Michigan. Do I have to give the landlord my new address to get the deposit back, and by when?",
+    "expect": {
+      "tool": "deposit",
+      "states": [
+        "MI"
+      ],
+      "must": [
+        "4 days"
+      ],
+      "cite": [
+        "michigan"
+      ]
+    },
+    "meta": {
+      "source": "Paraphrased from r/Renters (MI questionable deductions)"
+    }
+  },
+  {
+    "id": "me-propane",
+    "tags": [
+      "dispute",
+      "reddit"
+    ],
+    "prompt": "I moved out of a mobile home in Maine on 9/30 after ending my lease early. The landlord kept part of my deposit to refill the propane tank. How long did she have to send the deposit or a statement?",
+    "expect": {
+      "tool": "deposit",
+      "states": [
+        "ME"
+      ],
+      "must": [
+        "30 days"
+      ],
+      "cite": [
+        "maine"
+      ]
+    },
+    "meta": {
+      "source": "Paraphrased from r/Renters (Maine deposit issue)"
+    }
+  },
+  {
+    "id": "ca-la-paint",
+    "tags": [
+      "dispute",
+      "reddit"
+    ],
+    "prompt": "We got our $2,195 deposit back in Los Angeles minus $200 for paint touch-ups and $300 for cleaning, even though we left the place in good shape. Can a California landlord charge for paint like that?",
+    "expect": {
+      "tool": "deposit",
+      "states": [
+        "CA"
+      ],
+      "must": [
+        "wear and tear"
+      ],
+      "cite": [
+        "california"
+      ]
+    },
+    "meta": {
+      "source": "Paraphrased from r/Renters (Los Angeles, $500 deduction)"
+    }
+  },
+  {
+    "id": "tx-austin",
+    "tags": [
+      "dispute",
+      "reddit"
+    ],
+    "prompt": "I moved out of an apartment in Austin. About $350 of my deposit never came back and they never sent an itemized list. What does Texas law say?",
+    "expect": {
+      "tool": "deposit",
+      "states": [
+        "TX"
+      ],
+      "must": [
+        "30 days",
+        "bad faith"
+      ],
+      "cite": [
+        "texas"
+      ]
+    },
+    "meta": {
+      "source": "Paraphrased from r/Renters (Austin, TX)"
+    }
+  },
+  {
+    "id": "il-chicago",
+    "tags": [
+      "dispute",
+      "reddit"
+    ],
+    "prompt": "Our landlord in Chicago refused to return our security deposit and made up a list of reasons. What are the Illinois rules on deadlines and penalties?",
+    "expect": {
+      "tool": "deposit",
+      "states": [
+        "IL"
+      ],
+      "must": [
+        "30 days",
+        "(2x|twice|double)"
+      ],
+      "cite": [
+        "illinois"
+      ]
+    },
+    "meta": {
+      "source": "Paraphrased from r/Renters (Chicago, IL)"
+    }
+  },
+  {
+    "id": "nc-cleaning",
+    "tags": [
+      "dispute",
+      "reddit"
+    ],
+    "prompt": "In North Carolina we paid the $260 cleaning fee the lease required, and now the apartment wants to take an extra cleaning charge out of our deposit. What does NC law allow them to deduct?",
+    "expect": {
+      "tool": "deposit",
+      "states": [
+        "NC"
+      ],
+      "must": [],
+      "cite": [
+        "north-carolina"
+      ]
+    },
+    "meta": {
+      "source": "Paraphrased from r/Renters (NC extra cleaning fee)"
+    }
+  },
+  {
+    "id": "pa-forwarding",
+    "tags": [
+      "dispute",
+      "reddit"
+    ],
+    "prompt": "My Pittsburgh landlord claims she never got my forwarding address, so she didn't send my deposit. Does the forwarding address matter under Pennsylvania law?",
+    "expect": {
+      "tool": "deposit",
+      "states": [
+        "PA"
+      ],
+      "must": [
+        "forwarding address"
+      ],
+      "cite": [
+        "pennsylvania"
+      ]
+    },
+    "meta": {
+      "source": "Paraphrased from r/Renters (Pittsburgh, PA)"
+    }
+  },
+  {
+    "id": "compare-ca-nv-tx",
+    "tags": [
+      "compare",
+      "chat-test"
+    ],
+    "prompt": "Compare security deposit rules in California, Nevada and Texas.",
+    "expect": {
+      "tool": "deposit",
+      "states": [
+        "CA",
+        "NV",
+        "TX"
+      ],
+      "must": [
+        "21 days",
+        "30 days"
+      ],
+      "cite": [
+        "california",
+        "nevada",
+        "texas"
+      ]
+    },
+    "meta": {
+      "source": "Owner's Claude Desktop test 2026-11-01"
+    }
+  },
+  {
+    "id": "compare-co-wi",
+    "tags": [
+      "compare",
+      "handwritten"
+    ],
+    "prompt": "I own rentals in Colorado and Wisconsin. Which state gives me longer to return a tenant's deposit?",
+    "expect": {
+      "tool": "deposit",
+      "states": [
+        "CO",
+        "WI"
+      ],
+      "must": [
+        "30 days",
+        "21 days"
+      ],
+      "cite": [
+        "colorado",
+        "wisconsin"
+      ]
+    }
+  },
+  {
+    "id": "dc-not-covered",
+    "tags": [
+      "not-covered",
+      "chat-test"
+    ],
+    "prompt": "What's the security deposit law in Washington DC?",
+    "expect": {
+      "tool": "deposit",
+      "states": [
+        "DC"
+      ],
+      "must": [
+        "(not cover|n.t cover|isn.t covered|not included|only cover|only the 50|isn.t one of|is not one of)"
+      ],
+      "cite": []
+    },
+    "meta": {
+      "source": "Owner's Claude Desktop test 2026-11-01"
+    }
+  },
+  {
+    "id": "pr-not-covered",
+    "tags": [
+      "not-covered",
+      "handwritten"
+    ],
+    "prompt": "How long does a landlord in Puerto Rico have to return a security deposit?",
+    "expect": {
+      "tool": "deposit",
+      "states": [
+        "PR"
+      ],
+      "must": [
+        "(not cover|n.t cover|isn.t covered|not included|only cover|only the 50|isn.t one of|is not one of)"
+      ],
+      "cite": []
+    }
+  },
+  {
+    "id": "off-capital",
+    "tags": [
+      "off-topic",
+      "handwritten"
+    ],
+    "prompt": "What's the capital of Nevada?",
+    "expect": {
+      "tool": "none"
+    }
+  },
+  {
+    "id": "off-drywall",
+    "tags": [
+      "off-topic",
+      "reddit"
+    ],
+    "prompt": "My puppy chewed a small spot on the drywall. What products do I need to patch it before my move-out inspection next week?",
+    "expect": {
+      "tool": "none"
+    },
+    "meta": {
+      "source": "Paraphrased from r/Renters (Los Angeles, puppy chewed wall)"
+    }
+  },
+  {
+    "id": "off-welcome",
+    "tags": [
+      "off-topic",
+      "handwritten"
+    ],
+    "prompt": "Write a short, friendly welcome note for a new tenant moving in this weekend.",
+    "expect": {
+      "tool": "none"
+    }
+  }
+]
