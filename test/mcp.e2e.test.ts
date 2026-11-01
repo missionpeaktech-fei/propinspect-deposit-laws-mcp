@@ -41,6 +41,30 @@ test("the server lists three read-only tools", async () => {
   assert.match(stderr, /50 states from [0-9a-f]{7}, ready on stdio/, "startup line goes to stderr, not stdout");
 });
 
+// Security, from the AI app's side: we are third-party code, so make it checkable
+// that our tools can't be used to pull conversation data out (no free-text inputs).
+test("no tool takes free text: every input is a constrained code or a boolean", async () => {
+  const { tools } = await client.listTools();
+  type Prop = { type?: string; pattern?: string; enum?: unknown[]; items?: Prop };
+  const constrained = (p: Prop): boolean =>
+    p.type === "boolean" || Boolean(p.enum) || (p.type === "string" && Boolean(p.pattern)) || (p.type === "array" && !!p.items && constrained(p.items));
+  for (const tool of tools) {
+    for (const [name, prop] of Object.entries((tool.inputSchema.properties ?? {}) as Record<string, Prop>)) {
+      assert.ok(constrained(prop), `${tool.name}.${name} accepts free text`);
+    }
+  }
+});
+
+// Security: tool shadowing. Our text must not steer how the model uses other servers' tools.
+test("descriptions and instructions mention only our own tools", async () => {
+  const { tools } = await client.listTools();
+  const ours = new Set(tools.map((t) => t.name));
+  const text = [client.getInstructions?.() ?? "", ...tools.map((t) => t.description ?? "")].join("\n");
+  const mentioned = [...text.matchAll(/\b[a-z]+(?:_[a-z]+)+\b/g)].map((m) => m[0]);
+  const foreign = mentioned.filter((name) => !ours.has(name) && !["not_covered", "include_faqs"].includes(name));
+  assert.deepEqual(foreign, [], `mentions tools we don't own: ${foreign.join(", ")}`);
+});
+
 test("get_deposit_rules returns Nevada's rules with the citation, in text and structured form", async () => {
   const result = await client.callTool({ name: "get_deposit_rules", arguments: { state: "nv" } });
   assert.notEqual(result.isError, true);
