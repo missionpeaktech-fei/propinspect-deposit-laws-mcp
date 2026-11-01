@@ -13,7 +13,7 @@ The goal isn't logs. It's a loop that makes both this server and PropInspect's g
 | Source | What it shows | Where |
 |---|---|---|
 | **Call log** (opt-in) | Which tool, which state codes, found / not covered, FAQs requested, comparisons, speed | `DEPOSIT_LAWS_CALL_LOG` → one JSON line per call |
-| **AI app's MCP log** | Raw tool traffic, including inputs our schema rejected (model mistakes, injection attempts) | Claude Desktop: `~/Library/Logs/Claude/mcp-server-propinspect-deposit-laws.log` |
+| **AI app's MCP log** | Connection health: startup, our stderr lines, which methods were called. Claude Desktop logs method names only, **not arguments or results**, so inputs our schema rejected are not visible anywhere yet (a known gap) | Claude Desktop: `~/Library/Logs/Claude/mcp-server-propinspect-deposit-laws.log` |
 | **Evals** *(next)* | Whether the model picked the right tool and gave the right answer | The eval harness's results |
 | **Test notes** | What surprised a human tester: wording, tone, missing information | Your notes from real chats |
 
