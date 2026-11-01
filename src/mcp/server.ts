@@ -1,6 +1,7 @@
 import { McpServer, ResourceTemplate, type CallToolResult } from "@modelcontextprotocol/server";
 import { z } from "zod";
 import type { DepositLawCore, StateRulesResult, ComparisonRow, Citation } from "../core/depositLaws";
+import { noCallLog, type CallEntry, type CallLog } from "./callLog";
 
 /**
  * The MCP layer: describes the core to a model. No business logic here.
@@ -110,7 +111,21 @@ function toolResult(text: string, structured: object): CallToolResult {
   return { content: [{ type: "text", text }], structuredContent: structured as Record<string, unknown> };
 }
 
-export function createServer(core: DepositLawCore): McpServer {
+export function createServer(core: DepositLawCore, log: CallLog = noCallLog): McpServer {
+  /** Times a handler and records codes and status only (see callLog.ts). */
+  const timed = <T>(call: string, states: string[], run: () => T, describe: (result: T) => Omit<CallEntry, "call" | "states" | "ms">): T => {
+    const started = performance.now();
+    const codes = states.map((s) => s.toUpperCase());
+    try {
+      const result = run();
+      log.record({ call, states: codes, ...describe(result), ms: Math.round(performance.now() - started) });
+      return result;
+    } catch (error) {
+      log.record({ call, states: codes, status: "error", ms: Math.round(performance.now() - started) });
+      throw error;
+    }
+  };
+
   const server = new McpServer(
     { name: SERVER_NAME, title: SERVER_TITLE, version: SERVER_VERSION },
     { instructions: INSTRUCTIONS },
@@ -133,8 +148,12 @@ export function createServer(core: DepositLawCore): McpServer {
       annotations: { title: "Get deposit rules", ...readOnly },
     },
     async ({ state, include_faqs }) => {
-      const result = core.getRules(state);
       const includeFaqs = include_faqs ?? false;
+      const result = timed("get_deposit_rules", [state], () => core.getRules(state), (r) => ({
+        status: r.status,
+        ...(r.status === "not_covered" ? { notCovered: [state.toUpperCase()] } : {}),
+        includeFaqs,
+      }));
       const structured = result.status === "found" && !includeFaqs ? { ...result, faqs: undefined } : result;
       return toolResult(rulesText(result, includeFaqs), structured);
     },
@@ -154,7 +173,10 @@ export function createServer(core: DepositLawCore): McpServer {
       annotations: { title: "Compare states", ...readOnly },
     },
     async ({ states }) => {
-      const result = core.compareStates(states);
+      const result = timed("compare_states", states, () => core.compareStates(states), (r) => ({
+        status: r.notCovered.length === 0 ? "found" : r.rows.length === 0 ? "not_covered" : "partial",
+        ...(r.notCovered.length ? { notCovered: r.notCovered.map((gap) => states[gap.position]!.toUpperCase()) } : {}),
+      }));
       const text = [
         ...result.rows.flatMap((row) => [...rulesLines(row.state, row.stateCode, row.rules), sourceLine(row.citation), ""]),
         ...result.notCovered.map((gap) => `Item ${gap.position + 1} not covered: ${gap.reason}`),
@@ -174,7 +196,7 @@ export function createServer(core: DepositLawCore): McpServer {
       annotations: { title: "List covered states", ...readOnly },
     },
     async () => {
-      const list = core.listStates();
+      const list = timed("list_covered_states", [], () => core.listStates(), () => ({ status: "found" }));
       const text = [
         `${list.count} states covered, reviewed between ${list.reviewedBetween.oldest} and ${list.reviewedBetween.newest}:`,
         list.states.map((s) => s.stateCode).join(", "),
@@ -201,8 +223,15 @@ export function createServer(core: DepositLawCore): McpServer {
     },
     async (uri, variables) => {
       const code = String(variables.code ?? "");
-      const result = /^[A-Za-z]{2}$/.test(code) ? core.getRules(code) : undefined;
-      if (!result || result.status !== "found") {
+      if (!/^[A-Za-z]{2}$/.test(code)) {
+        // Not a code: nothing safe to log, and our wording only (the URI may come from a steered model).
+        throw new Error("Unknown resource. Use deposit-law://state/{code} with a covered two-letter state code.");
+      }
+      const result = timed("resource:state", [code], () => core.getRules(code), (r) => ({
+        status: r.status,
+        ...(r.status === "not_covered" ? { notCovered: [code.toUpperCase()] } : {}),
+      }));
+      if (result.status !== "found") {
         // Our wording only: the URI may have been written by a steered model.
         throw new Error("Unknown resource. Use deposit-law://state/{code} with a covered two-letter state code.");
       }
@@ -220,7 +249,8 @@ export function createServer(core: DepositLawCore): McpServer {
         letter: z.string().min(1).max(20_000).describe("The deduction letter or itemized list, pasted as text."),
       }),
     },
-    ({ state, letter }) => ({
+    ({ state, letter }) => timed("prompt:check_deduction_letter", [state], () => ({
+      // The letter itself is never logged: it is someone else's free text.
       messages: [
         {
           role: "user" as const,
@@ -243,7 +273,7 @@ export function createServer(core: DepositLawCore): McpServer {
           },
         },
       ],
-    }),
+    }), () => ({ status: "found" })),
   );
 
   return server;

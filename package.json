@@ -15,7 +15,8 @@
     "contract": "tsx scripts/contract.ts",
     "contract:check": "tsx scripts/contract.ts --check",
     "start": "tsx src/index.ts",
-    "inspect": "npx -y @modelcontextprotocol/inspector@2.13.0 npx tsx src/index.ts"
+    "inspect": "npx -y @modelcontextprotocol/inspector@2.13.0 npx tsx src/index.ts",
+    "signals": "tsx scripts/signals.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.4.0",

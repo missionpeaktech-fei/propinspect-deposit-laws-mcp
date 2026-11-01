@@ -10,13 +10,16 @@ import { StdioServerTransport } from "@modelcontextprotocol/server/stdio";
 import { loadDepositLaws, SnapshotError } from "./data/load";
 import { createDepositLawCore } from "./core/depositLaws";
 import { createServer, SERVER_NAME, SERVER_VERSION } from "./mcp/server";
+import { fileCallLog, noCallLog } from "./mcp/callLog";
 
 try {
   const data = loadDepositLaws();
-  const server = createServer(createDepositLawCore(data));
+  // Opt-in usage log for the feedback loop. Set by whoever configures the server, never by the model.
+  const logPath = process.env.DEPOSIT_LAWS_CALL_LOG;
+  const server = createServer(createDepositLawCore(data), logPath ? fileCallLog(logPath) : noCallLog);
   await server.connect(new StdioServerTransport());
   console.error(
-    `${SERVER_NAME} ${SERVER_VERSION}: ${data.meta.count} states from ${data.meta.source.commit.slice(0, 7)}, ready on stdio.`,
+    `${SERVER_NAME} ${SERVER_VERSION}: ${data.meta.count} states from ${data.meta.source.commit.slice(0, 7)}, ready on stdio${logPath ? `, call log on` : ""}.`,
   );
 } catch (error) {
   // Fail loudly: the AI app shows the server as failed and keeps this message in its log.
