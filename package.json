@@ -2,6 +2,7 @@
   "name": "propinspect-deposit-laws-mcp",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "description": "Read-only MCP server with cited security-deposit law facts for all 50 US states, from PropInspect's reviewed guides.",
   "type": "module",
   "engines": {

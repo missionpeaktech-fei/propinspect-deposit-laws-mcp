@@ -2,7 +2,7 @@
 
 A read-only [MCP](https://modelcontextprotocol.io) server that gives AI assistants exact, cited security-deposit law facts for all 50 US states. The facts come from [PropInspect's reviewed state guides](https://propinspect.net/security-deposit-laws).
 
-**Status:** in development; not published. Works locally over stdio.
+**Status:** source available; runs locally over stdio from a clone. Not on npm and not hosted yet: a local copy of legal data can go stale, so a hosted version is the planned way to use it ([ADR 0003](docs/decisions/0003-own-repo-local-first.md)).
 
 ## What it offers
 
@@ -85,6 +85,11 @@ npm run eval:security        # security suite  → .claude/hillclimb/deposit-law
 - **Cost** (measured 2026-11-01): about $0.12 per user case and $0.20 per security case. The "compare every pair of states" attack alone costs about $1.50.
 
 Results (`results.jsonl`) are committed. Transcripts and reports stay local.
+
+## License
+
+- **Code, docs and evals:** [MIT](LICENSE).
+- **Deposit-law data** (`data/`): [CC BY 4.0](data/LICENSE.md). Reuse it freely, including commercially, but credit PropInspect and link to the state guide each fact comes from. See [ADR 0006](docs/decisions/0006-licenses.md).
 
 ---
 
