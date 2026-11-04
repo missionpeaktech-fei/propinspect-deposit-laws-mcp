@@ -13,11 +13,11 @@ The goal isn't logs. It's a loop that makes both this server and PropInspect's g
 | Source | What it shows | Where |
 |---|---|---|
 | **Call log** (opt-in) | Which tool, which state codes, found / not covered, FAQs requested, comparisons, speed | `DEPOSIT_LAWS_CALL_LOG` → one JSON line per call |
-| **AI app's MCP log** | Connection health: startup, our stderr lines, which methods were called. Claude Desktop logs method names only, **not arguments or results**. Calls our input schema rejects are counted in the call log as `rejected` (tool name only, never the arguments; since 2026-11-01) | Claude Desktop: `~/Library/Logs/Claude/mcp-server-propinspect-deposit-laws.log` |
-| **Evals** *(next)* | Whether the model picked the right tool and gave the right answer | The eval harness's results |
+| **AI app's MCP log** | Connection health: startup, our stderr lines, the handshake and list methods. Claude Desktop logs method names only, **not arguments or results**, and showed no `tools/call` lines at all in our sessions, so it can't show usage. Calls our input schema rejects are counted in the call log as `rejected` (tool name only, never the arguments; since 2026-11-01) | Claude Desktop: `~/Library/Logs/Claude/mcp-server-propinspect-deposit-laws.log` |
+| **Evals** | Whether the model picked the right tool, gave the right answer and resisted attacks | `npm run eval` and `npm run eval:security` results (cases in `evals/`) |
 | **Test notes** | What surprised a human tester: wording, tone, missing information | Your notes from real chats |
 
-The server never sees the user's question or the model's answer, only tool arguments. That's by design (no free-text inputs), so answer quality comes from evals and test notes.
+The server never sees the user's question or the model's answer, so answer quality comes from evals and test notes. It does see what's sent to it: tool arguments, which are limited by design (no free-text inputs), plus two things that pass through and are never kept: the deduction letter pasted into the `check_deduction_letter` prompt, and arguments the schema refuses.
 
 To turn the call log on in Claude Desktop, add `env` to the server's entry:
 
