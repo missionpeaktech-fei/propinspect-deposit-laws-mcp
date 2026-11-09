@@ -11,6 +11,20 @@ GATEWAY_ID=$(aws bedrock-agentcore-control list-gateways --query "items[?name=='
 POOL_ID=$(aws cognito-idp list-user-pools --max-results 20 --query "UserPools[?Name=='agentcore-handson-gateway'].Id" --output text)
 ```
 
+## Step 8: policy (delete before everything else)
+
+```bash
+ENGINE_ID=$(aws bedrock-agentcore-control list-policy-engines --query "policyEngines[?name=='deposit_laws_policy'].policyEngineId" --output text)
+# 1. Detach the engine: deleting the gateway (step 4) also works, but detach first if you keep the gateway.
+# 2. Its policies, then the engine
+for p in $(aws bedrock-agentcore-control list-policies --policy-engine-id "$ENGINE_ID" --query 'policies[].policyId' --output text); do
+  aws bedrock-agentcore-control delete-policy --policy-engine-id "$ENGINE_ID" --policy-id "$p"; done
+sleep 15
+aws bedrock-agentcore-control delete-policy-engine --policy-engine-id "$ENGINE_ID"
+# 3. The gateway role's policy-engine permissions
+aws iam delete-role-policy --role-name agentcore-deposit-laws-gateway --policy-name use-policy-engine
+```
+
 ## Step 7: observability (delete first)
 
 ```bash

@@ -1,0 +1,20 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ReadThePolicyEngine",
+      "Effect": "Allow",
+      "Action": "bedrock-agentcore:GetPolicyEngine",
+      "Resource": "arn:aws:bedrock-agentcore:{{REGION}}:{{ACCOUNT}}:policy-engine/{{POLICY_ENGINE_ID}}"
+    },
+    {
+      "Sid": "AskThePolicyEngineForDecisions",
+      "Effect": "Allow",
+      "Action": ["bedrock-agentcore:AuthorizeAction", "bedrock-agentcore:PartiallyAuthorizeActions"],
+      "Resource": [
+        "arn:aws:bedrock-agentcore:{{REGION}}:{{ACCOUNT}}:policy-engine/{{POLICY_ENGINE_ID}}",
+        "arn:aws:bedrock-agentcore:{{REGION}}:{{ACCOUNT}}:gateway/{{GATEWAY_ID}}"
+      ]
+    }
+  ]
+}

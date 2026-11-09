@@ -158,3 +158,27 @@ What the docs say, checked before choosing the plan:
   - `npm audit` on ADOT: 4 high and 13 moderate, all in its database auto-instrumentations (`db.user` attribute leaks). Not loaded here (`OTEL_NODE_ENABLED_INSTRUMENTATIONS=http,undici`); don't `npm audit fix --force`.
 - **Privacy note for clients:** agent spans carry prompts and answers (GenAI semantic conventions) and gateway logs carry request bodies. Fine for public law data; for real users, treat `aws/spans` and the vended log groups as user data (KMS, retention, access control).
 - **Doc pages:** [Add observability to AgentCore resources](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-configure.html), the Agent Toolkit `amazon-bedrock` skill (`references/agentcore-memory-observability.md`).
+
+## Step 8: AgentCore Policy, enforced at the gateway (2026-11-09)
+
+- **Pieces:** a **policy engine** (`deposit_laws_policy`) holding **Cedar** policies, attached to the gateway with `policyEngineConfiguration {arn, mode}`. Every tool call is checked against the engine **outside the model and outside the agent's code**, before the target is called.
+- **Semantics:** with an engine attached in ENFORCE mode, **everything is denied unless a policy permits it**, and **forbid always wins**. So "block one tool" really means "permit the others" (plus an explicit forbid if you want one).
+- **Who is the principal:** with JWT inbound auth it's `AgentCore::OAuthUser`, its id the token's `sub`, and every claim a tag. A Cognito client-credentials token's `sub` is the client ID, so "for this agent" = `principal.getTag("client_id") == "<our client>"`. Actions are the prefixed tool names (`AgentCore::Action::"deposit-laws___compare_states"`); the resource must be the specific gateway ARN (wildcards are rejected).
+- **IAM:** the gateway's role needs `GetPolicyEngine`, `AuthorizeAction` and `PartiallyAuthorizeActions`, the last two on both the engine and the gateway (`deploy/agentcore/gateway-policy-permissions.json`). Without them, attaching fails and every call is denied.
+- **Automated reasoning caught a "bad" policy:** the forbid on `compare_states` was rejected as *"Overly Restrictive: Policy Engine will deny every request for … deposit-laws___compare_states"*. Correct: nothing permits that tool, so default-deny already blocks it. I recreated it with `--validation-mode IGNORE_ALL_FINDINGS` on purpose (defense in depth: it still wins if someone later adds a broad permit) and said so in its description. Lesson for clients: the analyzer is a useful reviewer; overriding it should be a recorded decision.
+- **`update-gateway` replaces the whole configuration.** I rebuilt the request from `get-gateway` so the authorizer kept its `allowedScopes`; the doc example omits them, and copying it would have silently dropped the scope check.
+- **LOG_ONLY, then ENFORCE (same token, same calls):**
+
+  | | LOG_ONLY | ENFORCE |
+  |---|---|---|
+  | `tools/list` | 3 tools | **2 tools**: `compare_states` hidden (`PartiallyAuthorizeActions` filters the list) |
+  | `compare_states` CA, TX | answered; logged `"decision": "DENY"` by `forbid_compare_states` | JSON-RPC error `-32002` "Tool Execution Denied: … policy enforcement [… forbid_compare_states …]" |
+  | `get_deposit_rules` NV | answered; `ALLOW` by `permit_lookup_tools` (37 ms) | answered |
+
+- **The agent adapted:** asked "Compare the deposit return deadlines in California and Texas" (which used `compare_states` in step 6), it now calls `get_deposit_rules` twice and still answers correctly with both citations (CA 21 days, TX 30 days). Because the gateway hides the tool, the model never tries it, so there's no error to recover from.
+- **Where the denial shows:**
+  - Gateway application log: `"Policy evaluation denied request"`, with `policy.decision`, `determiningPolicies`, and the principal (`AgentCore::OAuthUser` = our client ID).
+  - Traces (`aws/spans`): span `AgentCore.Policy.AuthorizeAction` with `aws.agentcore.policy.authorization_decision = DENY`, `aws.agentcore.gateway.policy.mode = ENFORCE`, `determining_policies = [forbid_compare_states-…]`, 41 ms.
+- **Step 7's open item, closed:** the gateway and Runtime spans did arrive, just late (65 gateway and 15 Runtime spans an hour on). The gateway's span names show the pipeline per tool call: `InboundAuth` → `Identity.Authorize` → `EvaluateRoutingRules` → `InvokeTool.<tool>` → `Policy.AuthorizeAction` → `TargetInvocation` → `AgentCore.Runtime.Invoke`; and for listing, `ListTools` → `Policy.PartiallyAuthorizeActions`.
+- **Consulting note:** this is the answer to "how do we stop an agent doing X even if it's prompt-injected?": a deterministic rule at the gateway, keyed on the caller's identity and the tool's arguments, logged with the deciding policy. The model can't talk its way past it, and it doesn't even see tools it isn't allowed to use.
+- **Doc pages:** [Policy in AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html), [Getting started](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-getting-started.html), [Core concepts](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-core-concepts.html), [Policy conditions](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-conditions.html), [IAM permissions](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-permissions.html), [Attach to an existing gateway](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/update-gateway-with-policy.html).

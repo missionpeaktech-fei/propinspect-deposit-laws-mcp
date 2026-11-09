@@ -50,3 +50,20 @@ aws bedrock-agentcore-control create-gateway-target --gateway-identifier <gatewa
 # Lock the Runtime to the gateway
 aws bedrock-agentcore-control put-resource-policy --resource-arn <runtime ARN> --policy file://runtime-resource-policy.json  # placeholders filled
 ```
+
+## Policy (step 8)
+
+| File | What it is |
+|---|---|
+| `gateway-policy-permissions.json` | What the gateway's role needs to use a policy engine: `GetPolicyEngine`, plus `AuthorizeAction` and `PartiallyAuthorizeActions` on both the engine and the gateway. Without them every call is denied. |
+| `policies/permit-lookup-tools.cedar` | Our client (`client_id` tag on `AgentCore::OAuthUser`) may call `get_deposit_rules` and `list_covered_states` |
+| `policies/forbid-compare-states.cedar` | The same client may not call `compare_states`. Created with `--validation-mode IGNORE_ALL_FINDINGS`: the analyzer flags it "Overly Restrictive" because default-deny already blocks the tool; it's kept as defense in depth. |
+
+```bash
+aws bedrock-agentcore-control create-policy-engine --name deposit_laws_policy --tags project=agentcore-handson
+aws bedrock-agentcore-control create-policy --policy-engine-id <engine id> --name permit_lookup_tools \
+  --definition '{"cedar":{"statement":"<statement with {{GATEWAY_ARN}} and {{CLIENT_ID}} filled in>"}}'
+# Attach: update-gateway replaces the whole configuration, so send the current one plus
+#   "policyEngineConfiguration": {"arn": "<engine ARN>", "mode": "LOG_ONLY"}   (then "ENFORCE")
+aws bedrock-agentcore-control update-gateway --cli-input-json file://gateway-update.json
+```
