@@ -52,3 +52,23 @@ What the docs say, checked before choosing the plan:
   - Claude Sonnet 4.6: "Model use case details have not been submitted" (Anthropic's one-time use-case form).
   - Amazon Nova Lite / Nova 2 Lite: "Too many tokens per day" on the first call; Service Quotas shows **0 tokens per day**.
 - **Lesson for clients:** model access is its own gate, separate from IAM: account plan, per-provider agreements and forms, and per-model daily token quotas. Check all three before promising a demo in a fresh account.
+
+## Step 3: host the server on AgentCore Runtime (2026-11-09)
+
+- **Budget first:** `agentcore-handson-monthly`, $20/month, emails at 80% actual and 100% forecast. The project's **spend limit** ($20, set in AWS Settings) is the hard stop: it pauses the project. A budget only warns.
+- **Packaging (`npm run build:agentcore`):** Runtime runs JavaScript, not TypeScript. esbuild bundles `src/http.ts` and every dependency into one ESM file (`build/http/index.js`, Node 22), next to `data/` and a two-line `package.json`. 336 KB zipped. Tested by unzipping into an empty folder and running it with `HOST=0.0.0.0` before uploading.
+- **Resources** (all tagged `project=agentcore-handson`, listed in `TEARDOWN.md`):
+  - S3 bucket `bedrock-agentcore-code-<account>-us-east-2`, public access blocked, holding the zip.
+  - IAM role `agentcore-deposit-laws-mcp-runtime`: trusted only by AgentCore in this account and region (`aws:SourceAccount` + `aws:SourceArn`, against confused-deputy attacks). Permissions: logs, X-Ray, metrics. **No Bedrock access**: AWS's sample role allows model calls, but this server never calls a model.
+  - Runtime `deposit_laws_mcp`: `codeConfiguration` (S3 zip, `NODE_22`, entry `build/http/index.js`), `serverProtocol: MCP`, env `HOST=0.0.0.0, PORT=8000`, idle sessions end after 5 minutes (memory is billed until then). The DEFAULT endpoint was created automatically.
+- **Inbound auth: IAM, not Cognito.** With no authorizer, Runtime requires SigV4-signed calls from an identity allowed `bedrock-agentcore:InvokeAgentRuntime`. User sign-in (JWT) moves to the Gateway in step 4; the Gateway will call the Runtime with IAM. One sign-in for people, IAM between AWS services: the usual enterprise split.
+- **Check (passed):**
+  - `aws bedrock-agentcore invoke-agent-runtime --agent-runtime-arn <arn> --qualifier DEFAULT --runtime-session-id <33+ chars> --content-type application/json --accept "application/json, text/event-stream" --payload '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' --cli-binary-format raw-in-base64-out out.txt` → 200, SSE, the 3 tools.
+  - `tools/call get_deposit_rules {"state":"NV"}` → the 30-day deadline and the Nevada guide link.
+  - The same request unsigned (curl) → 403.
+- **What surprised us:**
+  - The MCP payload passes through `InvokeAgentRuntime` untouched, so an ordinary AWS API call is an MCP client.
+  - A plain `tools/list` with no handshake works, thanks to the SDK's stateless legacy fallback.
+  - **No log group appeared** after several minutes, although the docs say Runtime creates one. To investigate in step 7 with Transaction Search (possibly the new-experience guardrails).
+- **Doc pages:** [Direct code deployment for Node.js](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-get-started-code-deploy-node.html), [Runtime IAM permissions](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-permissions.html), [Observability setup](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-configure.html), and the Agent Toolkit `amazon-bedrock` skill (`references/agentcore-runtime.md`).
+- **Cost so far:** cents at most (a few seconds of Runtime, one small S3 object).

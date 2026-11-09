@@ -17,6 +17,7 @@
     "contract:check": "tsx scripts/contract.ts --check",
     "start": "tsx src/index.ts",
     "start:http": "tsx src/http.ts",
+    "build:agentcore": "scripts/build-agentcore.sh",
     "inspect": "npx -y @modelcontextprotocol/inspector@2.13.0 npx tsx src/index.ts",
     "signals": "tsx scripts/signals.ts",
     "eval": "node evals/run-eval.mjs --flow .claude/hillclimb/deposit-law --model claude-opus-5-5",
@@ -31,6 +32,7 @@
     "@anthropic-ai/sdk": "1.3.0",
     "@modelcontextprotocol/client": "2.4.0",
     "@types/node": "22.20.5",
+    "esbuild": "0.28.2",
     "tsx": "4.23.15",
     "typescript": "7.0.2"
   }
