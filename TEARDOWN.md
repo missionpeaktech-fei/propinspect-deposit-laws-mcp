@@ -11,6 +11,26 @@ GATEWAY_ID=$(aws bedrock-agentcore-control list-gateways --query "items[?name=='
 POOL_ID=$(aws cognito-idp list-user-pools --max-results 20 --query "UserPools[?Name=='agentcore-handson-gateway'].Id" --output text)
 ```
 
+## Step 7: observability (delete first)
+
+```bash
+# 1. Log and trace deliveries (gateway and runtime), then their sources and destinations
+for d in $(aws logs describe-deliveries --query "deliveries[?starts_with(deliverySourceName,'handson-')].id" --output text); do aws logs delete-delivery --id "$d"; done
+for n in handson-gateway handson-runtime; do
+  for t in logs traces; do aws logs delete-delivery-source --name "$n-$t"; aws logs delete-delivery-destination --name "$n-$t-dest"; done; done
+
+# 2. Their log groups
+for g in $(aws logs describe-log-groups --log-group-name-prefix /aws/vendedlogs/bedrock-agentcore/ --query 'logGroups[].logGroupName' --output text); do aws logs delete-log-group --log-group-name "$g"; done
+
+# 3. Transaction Search: set indexing back to the free 1%. It's an account-level setting; leave it on,
+#    or switch traces back to X-Ray only and remove the resource policy:
+aws xray update-indexing-rule --name Default --rule '{"Probabilistic":{"DesiredSamplingPercentage":1}}'
+# aws xray update-trace-segment-destination --destination XRay
+# aws logs delete-resource-policy --policy-name TransactionSearchXRayAccess
+```
+
+`aws/spans` keeps spans for 7 days (retention set in step 7), so it can stay.
+
 ## Step 4: Gateway and Cognito (delete these before step 3's)
 
 ```bash

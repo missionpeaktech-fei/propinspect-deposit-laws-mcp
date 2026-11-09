@@ -1,5 +1,6 @@
 /** Ask one question: npm run ask -- "What's the deposit return deadline in Washington?" */
 import { createAgent, MODEL_ID, toolsCalled } from "./agent";
+import { flushTelemetry } from "./telemetry";
 
 const question = process.argv.slice(2).join(" ").trim();
 if (!question) {
@@ -10,4 +11,5 @@ const agent = createAgent();
 const result = await agent.invoke(question);
 console.log(String(result));
 console.error(`\n[model ${MODEL_ID} | tools: ${toolsCalled(agent).join(", ") || "none"}]`);
+await flushTelemetry();
 process.exit(0);

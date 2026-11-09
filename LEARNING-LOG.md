@@ -131,3 +131,30 @@ What the docs say, checked before choosing the plan:
   - **For clients:** start on Harness when the agent is "a prompt + tools + model" and the team wants managed ops; move to Strands-on-Runtime when they need custom control flow, a non-Strands framework, or code-level tests.
 - **Cost:** about 25 model calls across the two check runs plus one ask, roughly $0.30 on the Anthropic key (estimate, not measured); AWS a fraction of a cent.
 - **Doc pages:** [Strands: Anthropic provider](https://strandsagents.com/latest/documentation/docs/user-guide/concepts/model-providers/anthropic/), [Strands: MCP tools](https://strandsagents.com/latest/documentation/docs/user-guide/concepts/tools/mcp-tools/), and the Agent Toolkit `amazon-bedrock` skill (`references/agentcore-harness.md`).
+
+## Step 7: observability (2026-11-09)
+
+- **Three switches, all needed:**
+  1. **CloudWatch Transaction Search** (account-level, once): a CloudWatch Logs resource policy letting `xray.amazonaws.com` write to `aws/spans`, then `aws xray update-trace-segment-destination --destination CloudWatchLogs`. It sat in `PENDING` for **about 6 minutes** before `ACTIVE`. Indexing set to 100% for the hands-on (default 1% is free; set back in `TEARDOWN.md`).
+  2. **Vended logs and traces for Gateway and Runtime:** per resource, `put-delivery-source` (`APPLICATION_LOGS`, `TRACES`) → `put-delivery-destination` (a CloudWatch log group under `/aws/vendedlogs/bedrock-agentcore/…` with 7-day retention; `XRAY` for traces) → `create-delivery`. The `XRAY` deliveries are refused until Transaction Search is `ACTIVE`.
+  3. **The agent's own spans** (it runs on the Mac): Strands TS emits OpenTelemetry spans; **ADOT for Node** (`@aws/aws-distro-opentelemetry-node-autoinstrumentation` 0.13.0) exports them to `https://xray.us-east-2.amazonaws.com/v1/traces`, signing with SigV4. `agent/scripts/traced.sh` exports the `agentcore` profile's short-lived credentials into that one process (`aws configure export-credentials --format env`), enables only HTTP auto-instrumentation, and `ask.ts` flushes spans before exiting (otherwise `process.exit` drops them).
+- **Check (passed): one question = one trace** (`1-6af21420-1f54fdfd734e5f6185711fd2`), found with a Logs Insights query on `aws/spans`:
+
+  ```
+  invoke_agent Strands Agent ............................ 4.89 s   3,120 tokens in / 281 out
+  ├─ execute_agent_loop_cycle #1 ........................ 2.96 s
+  │  ├─ chat  (claude-sonnet-5-5, picks the tool) ....... 1.19 s   1,274 in / 60 out
+  │  └─ execute_tool deposit-laws___get_deposit_rules ... 1.77 s
+  │     └─ POST to the gateway (→ Runtime) .............. 1.72 s
+  └─ execute_agent_loop_cycle #2 ........................ 1.92 s
+     └─ chat  (writes the cited answer) ................. 1.91 s   1,846 in / 221 out
+  ```
+  The model's two calls take 3.1 s; the tool round trip through gateway and Runtime takes 1.7 s. Token counts come from the `gen_ai.usage.*` span attributes: the place to track cost per question.
+  Query: `fields name, durationNano/1000000 as ms, attributes.gen_ai.usage.input_tokens | filter traceId like /<id>/`. In the console: CloudWatch → Application Signals → Transaction Search, or X-Ray → Traces.
+- **Findings:**
+  - **The "missing" Runtime log group (step 3) was IAM eventual consistency.** `/aws/bedrock-agentcore/runtimes/<id>-DEFAULT` was created at the version-2 redeploy, not at the first deploy, which ran seconds after its role was created. Lesson: wait or retry after creating a role before a service assumes it. It now shows the server's startup line; retention set to 7 days.
+  - **The gateway refuses MCP 2026-07-28 inbound** (`"Unsupported protocol version: 2026-07-28"` in its logs); the agent's v2 client falls back to the 2025 handshake automatically. Target support for 2026-07-28 (docs) and inbound support are separate settings; `supportedVersions` was left at the default.
+  - **Gateway and Runtime internal spans haven't appeared in `aws/spans` yet** (logs are flowing; X-Ray shows the gateway only as the remote service the agent called). Recheck during step 8.
+  - `npm audit` on ADOT: 4 high and 13 moderate, all in its database auto-instrumentations (`db.user` attribute leaks). Not loaded here (`OTEL_NODE_ENABLED_INSTRUMENTATIONS=http,undici`); don't `npm audit fix --force`.
+- **Privacy note for clients:** agent spans carry prompts and answers (GenAI semantic conventions) and gateway logs carry request bodies. Fine for public law data; for real users, treat `aws/spans` and the vended log groups as user data (KMS, retention, access control).
+- **Doc pages:** [Add observability to AgentCore resources](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-configure.html), the Agent Toolkit `amazon-bedrock` skill (`references/agentcore-memory-observability.md`).
