@@ -42,7 +42,7 @@ claude mcp add propinspect-deposit-laws -- npx tsx /path/to/propinspect-deposit-
 | Data | `data/deposit-laws.json`, `src/data/` | A facts-only snapshot exported from the PropInspect app, validated at startup (schema + exactly the covered states) |
 | Core | `src/core/` | Plain functions: look up, compare, list. No MCP, no I/O. Every answer carries its citation. |
 | MCP | `src/mcp/server.ts` | Tools, a resource and a prompt that describe the core to a model; input shape checked here |
-| Transport | `src/index.ts` | stdio (logs to stderr only); Streamable HTTP later |
+| Transport | `src/index.ts`, `src/http.ts` | stdio (logs to stderr only); Streamable HTTP at `/mcp` with `/ping` (`npm run start:http`, port 8000, loopback only unless `HOST` is set: it has no sign-in of its own) |
 
 Design decisions: [docs/decisions/](docs/decisions/). Security: [docs/threat-model.md](docs/threat-model.md). Improving from real use: [docs/feedback-loop.md](docs/feedback-loop.md).
 
@@ -55,6 +55,7 @@ npm run contract      # regenerate docs/CONTRACT.md after changing a tool (CI ch
 npm run export-data   # rebuild the snapshot from the PropInspect app (needs access to it)
 npm run check-data    # exit 1 if the snapshot has drifted from the app
 npm run signals       # summarize the opt-in call log into suggested actions
+npm run start:http    # serve over HTTP at http://127.0.0.1:8000/mcp (PORT, HOST to change)
 ```
 
 Requires Node.js 20 or newer.

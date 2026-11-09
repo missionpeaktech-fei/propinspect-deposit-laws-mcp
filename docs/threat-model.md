@@ -94,6 +94,7 @@ LLM04 (data and model poisoning), LLM07 (system prompt leakage) and LLM08 (vecto
 
 - **We can't control the model's final answer.** A steered model could still misstate a correct tool result. Model-in-the-loop evals and a red-team pass check this.
 - **The stdio server trusts the AI app that launched it.** That's normal for local servers.
+- **The HTTP server has no sign-in of its own.** It binds to loopback by default, refuses other Host headers there (DNS rebinding) and any non-local browser Origin. Bind it to `0.0.0.0` only behind a host that adds sign-in, such as AgentCore Runtime or Gateway (ADR 0007). When hosted, the host's traces can hold users' questions: keep the call log off and treat those traces as user data.
 
 ## Next security steps
 

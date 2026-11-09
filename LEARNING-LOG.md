@@ -21,3 +21,16 @@ What the docs say, checked before choosing the plan:
   - `npx -y @modelcontextprotocol/inspector@2.13.0 --cli npx tsx src/index.ts --method tools/list` → the 3 tools.
   - `... --method tools/call --tool-name get_deposit_rules --tool-arg state=NV` → Nevada: 30-day return or itemized accounting, 3 months' rent cap, up to 2x penalty, with `Source: https://propinspect.net/security-deposit-laws/nevada (last reviewed 2026-10-12; NRS § 118A.242)` and the not-legal-advice notice.
 - **Next (step 2):** add streamable HTTP next to stdio, over the same tool core, at `:8000/mcp`, matching what Runtime expects.
+
+## Step 2: add an HTTP transport (2026-11-09)
+
+- **What changed:** `src/http.ts`, a second entry point next to stdio. It reuses the same tool core and `createServer()`; only the transport differs. Built with the SDK's `createMcpHandler` (one fresh `McpServer` per HTTP request, which is what "stateless" means in practice) and the official `@modelcontextprotocol/node` adapter 2.1.2 (no 2.4.0 release exists; it declares `@modelcontextprotocol/server ^2.4.0`).
+- **Shaped for AgentCore Runtime:** port 8000, path `/mcp`, and `GET /ping` returning `{"status":"Healthy"}` (the docs recommend it). `HOST` defaults to `127.0.0.1`; Runtime will need `0.0.0.0`.
+- **Old clients still work:** the handler serves 2025-era clients statelessly by default, so the Gateway or an older Inspector can talk to it whatever version they pick.
+- **Security:** the server has no sign-in. On loopback it rejects foreign Host headers (DNS rebinding); everywhere it rejects a browser Origin from another site. Sign-in comes from AgentCore in front of it. Added to `docs/threat-model.md`.
+- **What surprised us:** a per-request server means no shared state between calls, which is why the 2026-07-28 spec dropped the handshake; AgentCore's docs say version 2026-07-28 needs no stateful mode.
+- **Check (passed):**
+  - `npm test`: 38/38, including the new `test/http.e2e.test.ts` (3 tools over HTTP, NV deadline with citation, `/ping`, 404 elsewhere, Origin 403).
+  - `PORT=8765 npm run start:http`, then `npx -y @modelcontextprotocol/inspector@2.13.0 --cli http://localhost:8765/mcp --transport http --method tools/list` → the 3 tools; `tools/call get_deposit_rules state=NV` → "within 30 days" with the Nevada guide link. A request with `Host: evil.example` → 403.
+- **Doc pages:** [TypeScript SDK v2: serving over HTTP](https://ts.sdk.modelcontextprotocol.io/v2/serving/http), [Deploy MCP servers in AgentCore Runtime](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-mcp.html).
+- **Next (step 3, needs AWS):** Budgets alert, then deploy to Runtime (Node.js direct code deploy) with JWT sign-in.
