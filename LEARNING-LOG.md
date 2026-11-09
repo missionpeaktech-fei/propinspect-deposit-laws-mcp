@@ -90,3 +90,11 @@ What the docs say, checked before choosing the plan:
 - **Not yet:** gateway logs. Unlike Runtime, Gateway doesn't set up log delivery itself; that's part of step 7.
 - **Doc pages:** [MCP server targets](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-MCPservers.html), [Outbound authorization types](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-building-adding-targets-authorization.html), [Inbound authorization](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-inbound-auth.html), [Runtime targets and enforcing traffic through the gateway](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-http-runtime.html), [Restrict IAM inbound to your gateway](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-oauth.html#runtime-restrict-iam-gateway).
 - **Consulting note:** this is the "control layer" pattern in miniature: **identity at the front door** (customer IdP tokens), **least-privilege service identity** behind it, and a **resource policy that removes the side door**. Clients usually forget the third one.
+
+## Step 5: connect real MCP clients to the Gateway (2026-11-09)
+
+- **Token helper:** `deploy/agentcore/get-token.sh` prints a fresh Cognito access token (`--headers` prints `{"Authorization": "Bearer …"}`). It reads the client secret from `~/.config/agentcore-handson/cognito.env`, so no secret or token is ever pasted into a command, a config file or chat.
+- **5a, MCP Inspector (passed):**
+  - `npx -y @modelcontextprotocol/inspector@2.13.0 --cli <gateway>/mcp --transport http --header "Authorization: Bearer $(deploy/agentcore/get-token.sh)" --method tools/list` → the 3 prefixed tools.
+  - `--method tools/call --tool-name deposit-laws___get_deposit_rules --tool-arg state=WA` → "30 days after termination and vacation, with specific statement and documentation", source the Washington guide (reviewed 2026-08-27, RCW 59.18.260–.280).
+  - Without a token the Inspector didn't just fail: the gateway's 401 carries a `WWW-Authenticate` header pointing at OAuth protected-resource metadata, so the client tried to start a sign-in ("Interactive OAuth requires a TTY"). That's the MCP authorization spec at work: a standard client can discover where to log in.
