@@ -43,3 +43,12 @@ What the docs say, checked before choosing the plan:
 - **Agent Toolkit for AWS:** `aws configure agent-toolkit` installed 25 AWS skills into Claude Code and Cursor and added the `aws-mcp` server (a local `mcp-proxy-for-aws` in front of `https://aws-mcp.us-east-1.api.aws/mcp`), pointed at the profile with `AWS_MCP_PROXY_PROFILES=agentcore`. AWS's "new experience" rules sit in an untracked `CLAUDE.md` here.
 - **Consulting note:** the new experience is a guard-railed sandbox (single region, managed SCPs, spend limits in AWS Settings). Good for a learner or a small team; an enterprise client will be on the advanced experience with Organizations and Identity Center, so policies and roles will look different there.
 - **Doc pages:** [Agent Toolkit setup](https://github.com/aws/agent-toolkit-for-aws/blob/main/setup-instructions/setup.md), [Supported services for the new AWS experience](https://docs.aws.amazon.com/accounts/latest/reference/supported-services-sign-up-new.html).
+
+## Pre-flight checks in the new project (2026-11-09)
+
+- **AgentCore is in us-east-2:** `list-agent-runtimes`, `list-gateways` and `list-policy-engines` all answer (0 of each).
+- **Bedrock models are not usable yet on the Free plan** (5-token test calls, `aws bedrock-runtime converse`):
+  - Claude Sonnet 5.5 and Haiku 5.5: "not available for this account"; `get-foundation-model-availability` shows `agreementAvailability: NOT_AVAILABLE`.
+  - Claude Sonnet 4.6: "Model use case details have not been submitted" (Anthropic's one-time use-case form).
+  - Amazon Nova Lite / Nova 2 Lite: "Too many tokens per day" on the first call; Service Quotas shows **0 tokens per day**.
+- **Lesson for clients:** model access is its own gate, separate from IAM: account plan, per-provider agreements and forms, and per-model daily token quotas. Check all three before promising a demo in a fresh account.
