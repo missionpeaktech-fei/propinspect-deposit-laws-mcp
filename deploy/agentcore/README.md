@@ -67,3 +67,25 @@ aws bedrock-agentcore-control create-policy --policy-engine-id <engine id> --nam
 #   "policyEngineConfiguration": {"arn": "<engine ARN>", "mode": "LOG_ONLY"}   (then "ENFORCE")
 aws bedrock-agentcore-control update-gateway --cli-input-json file://gateway-update.json
 ```
+
+## Evaluations (step 9)
+
+Built-in evaluators need nothing created. The code-based evaluator is a Lambda (`agent/evaluators/deterministic/index.mjs`) registered with AgentCore:
+
+```bash
+# Role: Lambda may only write its own log group (fill {{ACCOUNT}}, {{REGION}}, {{FUNCTION}})
+aws iam create-role --role-name agentcore-handson-eval-lambda --assume-role-policy-document file://eval-lambda-trust-policy.json --tags Key=project,Value=agentcore-handson
+aws iam put-role-policy --role-name agentcore-handson-eval-lambda --policy-name write-own-logs --policy-document file://eval-lambda-permissions.json
+aws logs create-log-group --log-group-name /aws/lambda/handson-deposit-eval-checks --tags project=agentcore-handson
+aws logs put-retention-policy --log-group-name /aws/lambda/handson-deposit-eval-checks --retention-in-days 7
+# Function (wait ~15 s after creating the role), then register it
+(cd ../../agent/evaluators/deterministic && zip -q -X /tmp/det.zip index.mjs)
+aws lambda create-function --function-name handson-deposit-eval-checks --runtime nodejs22.x --architectures arm64 \
+  --handler index.handler --role <role ARN> --zip-file fileb:///tmp/det.zip --timeout 30 --tags project=agentcore-handson
+aws bedrock-agentcore-control create-evaluator --evaluator-name deposit_law_hard_rules --level SESSION \
+  --evaluator-config '{"codeBased":{"lambdaConfig":{"lambdaArn":"<function ARN>","lambdaTimeoutInSeconds":30}}}' \
+  --tags project=agentcore-handson
+# Update the code later: aws lambda update-function-code --function-name handson-deposit-eval-checks --zip-file fileb:///tmp/det.zip
+```
+
+On-demand `Evaluate` invokes the Lambda with the caller's credentials; online evaluation would need an execution role with `lambda:InvokeFunction`.

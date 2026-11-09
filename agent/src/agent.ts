@@ -20,7 +20,8 @@ Rules:
 - End with one short line saying this is general information, not legal advice.
 - Keep answers short: the rule the user asked about, then the citation.`;
 
-export function createAgent() {
+/** sessionId goes on every span as `session.id`: AgentCore Evaluations groups spans into sessions by it. */
+export function createAgent(sessionId?: string) {
   const config = loadConfig();
   const gateway = new McpClient({
     transport: new StreamableHTTPClientTransport(new URL(config.gatewayUrl), {
@@ -28,7 +29,13 @@ export function createAgent() {
     }),
   });
   const model = new AnthropicModel({ apiKey: config.anthropicApiKey, modelId: MODEL_ID, maxTokens: 1024 });
-  return new Agent({ model, tools: [gateway], systemPrompt: SYSTEM_PROMPT, printer: false });
+  return new Agent({
+    model,
+    tools: [gateway],
+    systemPrompt: SYSTEM_PROMPT,
+    printer: false,
+    ...(sessionId ? { traceAttributes: { "session.id": sessionId } } : {}),
+  });
 }
 
 /** Names of the tools the agent called during its conversation, in order. */

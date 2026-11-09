@@ -11,7 +11,22 @@ GATEWAY_ID=$(aws bedrock-agentcore-control list-gateways --query "items[?name=='
 POOL_ID=$(aws cognito-idp list-user-pools --max-results 20 --query "UserPools[?Name=='agentcore-handson-gateway'].Id" --output text)
 ```
 
-## Step 8: policy (delete before everything else)
+## Step 9: evaluations (delete before everything else)
+
+Nothing here costs money while idle; delete it anyway. Only one evaluator was created: the derived (Bedrock) judges
+were refused at creation, so none exist.
+
+```bash
+# 1. The code-based evaluator, then its Lambda, the Lambda's log group and role
+EVAL_ID=$(aws bedrock-agentcore-control list-evaluators --query "evaluators[?evaluatorName=='deposit_law_hard_rules'].evaluatorId" --output text)
+aws bedrock-agentcore-control delete-evaluator --evaluator-id "$EVAL_ID"
+aws lambda delete-function --function-name handson-deposit-eval-checks
+aws logs delete-log-group --log-group-name /aws/lambda/handson-deposit-eval-checks
+aws iam delete-role-policy --role-name agentcore-handson-eval-lambda --policy-name write-own-logs
+aws iam delete-role --role-name agentcore-handson-eval-lambda
+```
+
+## Step 8: policy (delete next)
 
 ```bash
 ENGINE_ID=$(aws bedrock-agentcore-control list-policy-engines --query "policyEngines[?name=='deposit_laws_policy'].policyEngineId" --output text)

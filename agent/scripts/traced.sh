@@ -8,8 +8,10 @@ cd "$(dirname "$0")/.."
 REGION="${AWS_REGION:-us-east-2}"
 eval "$(aws configure export-credentials --profile "${AWS_PROFILE:-agentcore}" --format env)"
 export AWS_REGION="$REGION" AWS_DEFAULT_REGION="$REGION"
-export OTEL_SERVICE_NAME=deposit-laws-agent
-export OTEL_RESOURCE_ATTRIBUTES="deployment.environment=local-hands-on"
+# Not OTEL_SERVICE_NAME: Strands TS also uses it as its tracer (scope) name, and AgentCore
+# Evaluations only accepts spans whose scope is "strands-agents". Set service.name here instead.
+unset OTEL_SERVICE_NAME
+export OTEL_RESOURCE_ATTRIBUTES="service.name=deposit-laws-agent,deployment.environment=local-hands-on"
 export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
 export OTEL_TRACES_EXPORTER=otlp
 export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT="https://xray.$REGION.amazonaws.com/v1/traces"

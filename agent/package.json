@@ -10,6 +10,7 @@
   "scripts": {
     "ask": "tsx src/ask.ts",
     "check": "tsx src/check.ts",
+    "eval": "tsx src/evaluate.ts",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test test/*.test.ts"
   },
