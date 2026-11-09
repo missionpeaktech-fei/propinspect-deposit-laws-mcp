@@ -35,7 +35,7 @@ aws iam delete-role --role-name agentcore-handson-eval-judge
 aws secretsmanager delete-secret --secret-id agentcore-handson/anthropic-api-key --recovery-window-in-days 7
 ```
 
-## Step 8: policy (delete next)
+## Step 8: policy (delete after the gateway in step 4 if you delete both; an attached engine is in use)
 
 ```bash
 ENGINE_ID=$(aws bedrock-agentcore-control list-policy-engines --query "policyEngines[?name=='deposit_laws_policy'].policyEngineId" --output text)
@@ -113,7 +113,7 @@ for g in $(aws logs describe-log-groups --log-group-name-prefix /aws/bedrock-age
 
 ## Last: the budget
 
-Keep it until the bill for the month is final, then:
+Kept after the 2026-11-09 teardown (free; alerts if anything starts costing). Delete it when the project is closed:
 
 ```bash
 aws budgets delete-budget --region us-east-1 --account-id "$ACCOUNT" --budget-name agentcore-handson-monthly

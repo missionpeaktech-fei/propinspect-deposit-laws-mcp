@@ -275,3 +275,7 @@ What one day of hands-on (with an AI assistant) taught me, written for the clien
 4. How will you know the agent is right? A test set with ground truth and known-bad cases comes before any evaluator choice.
 
 **Reusable from this repo:** `deploy/agentcore/` (role and policy templates, deploy script, Cedar examples, token script), `agent/src/evaluate.ts` (switchable evaluators with a negative control), and this log.
+
+## Teardown (2026-11-09)
+
+Ran `TEARDOWN.md` with the owner's go: evaluators, Lambdas and roles; deliveries and vended log groups (Transaction Search indexing back to 1%); gateway target and gateway, **then** the policy engine and its policies (worked in that order); gateway role; Cognito domain and pool; the local `cognito.env`; Runtime, code bucket, Runtime role and log group. Check afterwards: no AgentCore resources, Lambdas, `agentcore-*` roles or Cognito pools left. The Anthropic key secret is in its 7-day recovery window (gone 2026-11-16); the owner revokes the key in the Anthropic Console. Kept: the $20 budget (free) and `aws/spans` (7-day retention). The tagging API kept listing the deleted Cognito pool for a while: confirm deletions with the service's own describe call, not the tag index.
