@@ -123,7 +123,7 @@ aws budgets delete-budget --region us-east-1 --account-id "$ACCOUNT" --budget-na
 
 ```bash
 aws resourcegroupstaggingapi get-resources --tag-filters Key=project,Values=agentcore-handson --query 'ResourceTagMappingList[].ResourceARN'
-aws resourcegroupstaggingapi get-resources --region us-east-1 --tag-filters Key=project,Values=agentcore-handson --query 'ResourceTagMappingList[].ResourceARN'
+aws budgets describe-budgets --account-id <account> --region us-east-1 --query 'Budgets[].BudgetName'   # us-east-1: only the budget; the tagging API there is denied by the project's SCP
 ```
 
 Both should print `[]`. IAM roles and the Cognito domain don't appear in that API: `aws iam list-roles --query "Roles[?starts_with(RoleName,'agentcore-')].RoleName"` should be empty, and `aws cognito-idp list-user-pools --max-results 20` should not list `agentcore-handson-gateway`.

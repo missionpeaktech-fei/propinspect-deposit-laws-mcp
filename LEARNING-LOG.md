@@ -228,3 +228,50 @@ What the docs say, checked before choosing the plan:
   4. Custom Bedrock judges only when the built-ins don't fit, and **plan the model-access approval first**. To use a non-Bedrock model (e.g. the client's own Anthropic or OpenAI key), call it from a code-based Lambda (option C, tested): it also sidesteps a project with no Bedrock quota.
   5. **Try the cheapest judge model first**, and keep a bigger one only where a test set shows it catches more.
 - **Doc pages:** [Evaluations](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html), [Telemetry setup](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/supported-frameworks-telemetry.html), [Strands spans](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/supported-frameworks-strands.html), [On-demand getting started](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/getting-started-on-demand.html), [Ground truth](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/ground-truth-evaluations.html), [Code-based evaluators](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/code-based-evaluators.html), [Third-party and derived](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/third-party-evaluators.html), [Pricing](https://aws.amazon.com/bedrock/agentcore/pricing/).
+
+## Step 10: takeaways for clients (2026-11-09)
+
+What one day of hands-on (with an AI assistant) taught me, written for the client conversation.
+
+**What AgentCore is, in control-layer terms**
+
+| Piece | What it does | Enterprise control it maps to |
+|---|---|---|
+| Runtime | Hosts an agent or MCP server (zip or container), IAM-signed calls only, per-session isolation | Hosting + network boundary |
+| Gateway | One MCP endpoint in front of many tools; inbound sign-in (JWT), outbound credentials (IAM, API keys, OAuth) | Identity + tool catalog |
+| Policy | Cedar rules checked on every tool call, outside the model; default deny; can hide tools from the list | Authorization, deterministic |
+| Observability | OpenTelemetry into CloudWatch (Transaction Search); agent, gateway and runtime spans in one trace | Audit + troubleshooting |
+| Evaluations | Built-in LLM judges on AWS's capacity, plus your own code (Lambda) judges, on-demand or on live traffic | Quality assurance |
+
+**Good fit**
+- A team already on AWS that has (or will have) several tools/APIs and several agents, and needs identity, per-tool permissions and an audit trail around them.
+- Regulated or risk-averse settings: "the agent can't do X even if it is prompt-injected" is a Cedar rule at the gateway, logged with the deciding policy (step 8).
+- Model-agnostic shops: we ran Claude through the Anthropic API, not Bedrock, and nothing in AgentCore cared.
+
+**Not worth it**
+- One agent, a couple of tools, one team: a plain MCP server with an API key, plus OpenTelemetry to whatever they already use, is far less setup.
+- Teams not on AWS: the value is the integration with IAM, CloudWatch and Cognito.
+
+**What was hard (rank order)**
+1. **Account readiness, not AgentCore.** A brand-new project had **0 tokens/day on every Bedrock model** (not adjustable; Support case), a fixed region, and managed SCPs that deny some APIs (the tagging API in us-east-1). Ask for Bedrock quota weeks ahead.
+2. **Observability plumbing.** Transaction Search, vended log/trace deliveries per resource, ADOT setup for an agent outside the Runtime, spans that arrived an hour late, and two silent gotchas that block Evaluations (`session.id`, the Strands scope name).
+3. **Docs vs reality.** `update-gateway` replaces the whole configuration; the Gateway refused MCP 2026-07-28 inbound; derived evaluators need `--level` in the CLI; the evaluator Lambda payload doesn't name the evaluator. Verify each step against the live API, not the docs.
+4. **IAM eventual consistency:** create roles, wait ~15 s, then the resource that uses them.
+
+**Rough cost**
+- AWS: the budget showed **$0.00 actual** at the end of the day (credits; billing data lags ~1 day). Everything here is usage-based (Runtime per active second, Gateway/Policy/Evaluations per call); idle cost was only the Secrets Manager secret (~$0.40/month) and log storage.
+- Model and judges: the Anthropic API for the agent's test runs (cents per run) and the Claude judges (Haiku $0.0013 vs Opus $0.05 per 6 judgments); built-in evaluators 0.3–0.6 cents per judgment. Under a few dollars in all; confirm in the Anthropic Console.
+- The real cost is **setup time**: a day for this with an AI pair, much of it on account readiness and observability.
+
+**Lock-in**
+- **Portable:** the MCP server (same code on stdio, HTTP, or any host), the Strands agent (open source, any model), OpenTelemetry traces, the evaluator logic (plain functions) and the test cases with ground truth.
+- **AWS-specific:** Gateway and Runtime configuration, Cognito, IAM roles, the policy engine (Cedar is an open language, but the entity model here is AgentCore's), the Evaluations API and Transaction Search.
+- **Exit path:** swap the Gateway for any MCP gateway plus an OAuth server, re-express the Cedar rules in that gateway's policy layer, keep the evaluators as local tests (we already have `check.ts`). Moderate effort, no data trapped.
+
+**Questions to ask a client first**
+1. Are you on AWS, and is Bedrock quota already approved for the models you want?
+2. How many agents and tools, owned by how many teams? (One and few = skip AgentCore.)
+3. What must an agent never do, and who must be able to prove it didn't? (That's Policy plus Observability.)
+4. How will you know the agent is right? A test set with ground truth and known-bad cases comes before any evaluator choice.
+
+**Reusable from this repo:** `deploy/agentcore/` (role and policy templates, deploy script, Cedar examples, token script), `agent/src/evaluate.ts` (switchable evaluators with a negative control), and this log.
