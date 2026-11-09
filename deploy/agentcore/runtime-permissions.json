@@ -1,0 +1,42 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "RuntimeLogGroups",
+      "Effect": "Allow",
+      "Action": ["logs:DescribeLogStreams", "logs:CreateLogGroup"],
+      "Resource": ["arn:aws:logs:{{REGION}}:{{ACCOUNT}}:log-group:/aws/bedrock-agentcore/runtimes/*"]
+    },
+    {
+      "Sid": "LetXRayDeliverSpansToThisRuntimesLogGroup",
+      "Effect": "Allow",
+      "Action": ["logs:PutResourcePolicy"],
+      "Resource": ["arn:aws:logs:{{REGION}}:{{ACCOUNT}}:log-group:/aws/bedrock-agentcore/runtimes/{{NAME}}-*"]
+    },
+    {
+      "Sid": "ListLogGroups",
+      "Effect": "Allow",
+      "Action": ["logs:DescribeLogGroups"],
+      "Resource": ["arn:aws:logs:{{REGION}}:{{ACCOUNT}}:log-group:*"]
+    },
+    {
+      "Sid": "WriteRuntimeLogs",
+      "Effect": "Allow",
+      "Action": ["logs:CreateLogStream", "logs:PutLogEvents"],
+      "Resource": ["arn:aws:logs:{{REGION}}:{{ACCOUNT}}:log-group:/aws/bedrock-agentcore/runtimes/*:log-stream:*"]
+    },
+    {
+      "Sid": "Traces",
+      "Effect": "Allow",
+      "Action": ["xray:PutTraceSegments", "xray:PutTelemetryRecords", "xray:GetSamplingRules", "xray:GetSamplingTargets"],
+      "Resource": ["*"]
+    },
+    {
+      "Sid": "MetricsInAgentCoreNamespaceOnly",
+      "Effect": "Allow",
+      "Action": "cloudwatch:PutMetricData",
+      "Resource": "*",
+      "Condition": { "StringEquals": { "cloudwatch:namespace": "bedrock-agentcore" } }
+    }
+  ]
+}
