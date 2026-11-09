@@ -259,7 +259,7 @@ What one day of hands-on (with an AI assistant) taught me, written for the clien
 4. **IAM eventual consistency:** create roles, wait ~15 s, then the resource that uses them.
 
 **Rough cost**
-- AWS: the budget showed **$0.00 actual** at the end of the day (credits; billing data lags ~1 day). Everything here is usage-based (Runtime per active second, Gateway/Policy/Evaluations per call); idle cost was only the Secrets Manager secret (~$0.40/month) and log storage.
+- AWS: the budget showed **$0.00 actual** at the end of the day (credits; billing data lags ~1 day). The first billing data (spend-limit email, same evening): **$0.31**, mostly built-in Evaluations ($0.13 input + $0.09 output tokens, matching the ~22 cents estimated in step 9) and **Cognito machine-to-machine token requests ($0.07)**, which are billed per token request. That's why the agent caches its token. The email "forecast" of $120/month was the day's burst extrapolated, after everything had been torn down: read a forecast with what is still running in mind. Everything here is usage-based (Runtime per active second, Gateway/Policy/Evaluations per call); idle cost was only the Secrets Manager secret (~$0.40/month) and log storage.
 - Model and judges: the Anthropic API for the agent's test runs (cents per run) and the Claude judges (Haiku $0.0013 vs Opus $0.05 per 6 judgments); built-in evaluators 0.3–0.6 cents per judgment. Under a few dollars in all; confirm in the Anthropic Console.
 - The real cost is **setup time**: a day for this with an AI pair, much of it on account readiness and observability.
 
