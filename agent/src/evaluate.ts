@@ -22,6 +22,14 @@ const DEFAULT_EVALUATORS = ["Builtin.Correctness", "Builtin.GoalSuccessRate", "B
 const BUILTIN_PER_1K_IN = 0.0024;
 const BUILTIN_PER_1K_OUT = 0.012;
 const CUSTOM_PER_EVAL = 0.0015; // custom evaluators: $1.50 per 1,000, model usage billed separately
+// Anthropic API $ per 1M input/output tokens (claude-api skill, cached 2026-10-06), for the Claude judge (option C).
+const ANTHROPIC_PER_M: Record<string, [number, number]> = { "claude-opus-5-5": [4, 20], "claude-haiku-5-5": [0.1, 0.5] };
+/** The Claude judge appends "[model: N in / M out]" to its explanation; price it. */
+function judgeUsd(explanation = ""): number {
+  const m = explanation.match(/\[(claude-[\w-]+): (\d+) in \/ (\d+) out\]$/);
+  const price = m ? ANTHROPIC_PER_M[m[1]!] : undefined;
+  return m && price ? (Number(m[2]) * price[0] + Number(m[3]) * price[1]) / 1e6 : 0;
+}
 
 const awsEnv = { ...process.env, AWS_PROFILE: process.env.AWS_PROFILE ?? "agentcore", AWS_REGION: process.env.AWS_REGION ?? "us-east-2", AWS_PAGER: "" };
 const aws = (...args: string[]) => JSON.parse(execFileSync("aws", [...args, "--output", "json"], { env: awsEnv, maxBuffer: 64 << 20 }).toString());
@@ -121,8 +129,9 @@ const totals = evaluators.map((e) => {
   const tin = rs.reduce((n, r) => n + (r.tokenUsage?.inputTokens ?? 0), 0);
   const tout = rs.reduce((n, r) => n + (r.tokenUsage?.outputTokens ?? 0), 0);
   const managed = /^(Builtin|ThirdParty)\./.test(e);
-  const usd = managed ? (tin / 1000) * BUILTIN_PER_1K_IN + (tout / 1000) * BUILTIN_PER_1K_OUT : rs.length * CUSTOM_PER_EVAL;
-  console.log(`  ${e}: ${rs.length} results, ${tin} in / ${tout} out tokens, ~$${usd.toFixed(4)}${managed ? "" : " + your own model/Lambda"}`);
+  const judge = rs.reduce((n, r) => n + judgeUsd(r.explanation), 0);
+  const usd = managed ? (tin / 1000) * BUILTIN_PER_1K_IN + (tout / 1000) * BUILTIN_PER_1K_OUT : rs.length * CUSTOM_PER_EVAL + judge;
+  console.log(`  ${e}: ${rs.length} results, ${tin} in / ${tout} out tokens, ~$${usd.toFixed(4)}${managed ? "" : ` (AgentCore fee, upper bound${judge ? ` + $${judge.toFixed(4)} Anthropic API` : ""})`}`);
   return { evaluatorId: e, results: rs.length, inputTokens: tin, outputTokens: tout, usd };
 });
 

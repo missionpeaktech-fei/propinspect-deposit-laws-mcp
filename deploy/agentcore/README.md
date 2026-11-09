@@ -89,3 +89,21 @@ aws bedrock-agentcore-control create-evaluator --evaluator-name deposit_law_hard
 ```
 
 On-demand `Evaluate` invokes the Lambda with the caller's credentials; online evaluation would need an execution role with `lambda:InvokeFunction`.
+
+### Claude judge (option C): Claude via the Anthropic API, owner's key
+
+```bash
+# 1. The owner puts the key in Secrets Manager (stdin, never in argv or history)
+sed -n 's/^ANTHROPIC_API_KEY=//p' ~/.config/agentcore-handson/anthropic.env | tr -d '\n' | aws secretsmanager create-secret \
+  --name agentcore-handson/anthropic-api-key --secret-string file:///dev/stdin --tags Key=project,Value=agentcore-handson
+# 2. Role: own logs + that one secret (eval-lambda-trust-policy.json, eval-judge-permissions.json; fill placeholders)
+aws iam create-role --role-name agentcore-handson-eval-judge --assume-role-policy-document file://eval-lambda-trust-policy.json --tags Key=project,Value=agentcore-handson
+aws iam put-role-policy --role-name agentcore-handson-eval-judge --policy-name logs-and-anthropic-key --policy-document file://eval-judge-permissions.json
+# 3. One function per judge model (the payload doesn't name the evaluator); create each log group first with 7-day retention
+(cd ../../agent && scripts/build-judge.sh)
+aws lambda create-function --function-name handson-claude-judge --runtime nodejs22.x --architectures arm64 --handler index.handler \
+  --role <role ARN> --zip-file fileb://../../agent/dist/claude-judge.zip --timeout 120 --memory-size 256 \
+  --environment "Variables={ANTHROPIC_KEY_SECRET=agentcore-handson/anthropic-api-key,JUDGE_MODEL=claude-opus-5-5}" --tags project=agentcore-handson
+#    ...and handson-claude-judge-haiku with JUDGE_MODEL=claude-haiku-5-5
+# 4. Register each: create-evaluator --evaluator-name claude_judge_opus55 (or _haiku55) --level SESSION, codeBased lambdaArn as above
+```

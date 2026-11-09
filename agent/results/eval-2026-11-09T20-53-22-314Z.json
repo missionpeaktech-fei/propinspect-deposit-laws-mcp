@@ -1,0 +1,137 @@
+{
+  "checkFile": "check-2026-11-09T20-34-10-578Z.json",
+  "evaluators": [
+    "claude_judge_haiku55-z7kX76GX1q"
+  ],
+  "totals": [
+    {
+      "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+      "results": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "usd": 0
+    }
+  ],
+  "rows": [
+    {
+      "id": "wa-deadline",
+      "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline",
+      "regexPass": true,
+      "results": {
+        "claude_judge_haiku55-z7kX76GX1q": [
+          {
+            "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+            "evaluatorName": "claude_judge_haiku55",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline"
+              }
+            },
+            "errorMessage": "No model for evaluator undefined.",
+            "errorCode": "UNKNOWN_JUDGE_MODEL"
+          }
+        ]
+      }
+    },
+    {
+      "id": "nv-cap",
+      "sessionId": "check-2026-11-09T20-34-10-578Z-nv-cap",
+      "regexPass": true,
+      "results": {
+        "claude_judge_haiku55-z7kX76GX1q": [
+          {
+            "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+            "evaluatorName": "claude_judge_haiku55",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-nv-cap"
+              }
+            },
+            "errorMessage": "No model for evaluator undefined.",
+            "errorCode": "UNKNOWN_JUDGE_MODEL"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ca-vs-tx",
+      "sessionId": "check-2026-11-09T20-34-10-578Z-ca-vs-tx",
+      "regexPass": true,
+      "results": {
+        "claude_judge_haiku55-z7kX76GX1q": [
+          {
+            "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+            "evaluatorName": "claude_judge_haiku55",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-ca-vs-tx"
+              }
+            },
+            "errorMessage": "No model for evaluator undefined.",
+            "errorCode": "UNKNOWN_JUDGE_MODEL"
+          }
+        ]
+      }
+    },
+    {
+      "id": "covered-states",
+      "sessionId": "check-2026-11-09T20-34-10-578Z-covered-states",
+      "regexPass": true,
+      "results": {
+        "claude_judge_haiku55-z7kX76GX1q": [
+          {
+            "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+            "evaluatorName": "claude_judge_haiku55",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-covered-states"
+              }
+            },
+            "errorMessage": "No model for evaluator undefined.",
+            "errorCode": "UNKNOWN_JUDGE_MODEL"
+          }
+        ]
+      }
+    },
+    {
+      "id": "dc-not-covered",
+      "sessionId": "check-2026-11-09T20-34-10-578Z-dc-not-covered",
+      "regexPass": true,
+      "results": {
+        "claude_judge_haiku55-z7kX76GX1q": [
+          {
+            "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+            "evaluatorName": "claude_judge_haiku55",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-dc-not-covered"
+              }
+            },
+            "errorMessage": "No model for evaluator undefined.",
+            "errorCode": "UNKNOWN_JUDGE_MODEL"
+          }
+        ]
+      }
+    },
+    {
+      "id": "CONTROL wa-tampered",
+      "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline-tampered",
+      "regexPass": false,
+      "results": {
+        "claude_judge_haiku55-z7kX76GX1q": [
+          {
+            "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+            "evaluatorName": "claude_judge_haiku55",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline-tampered"
+              }
+            },
+            "errorMessage": "No model for evaluator undefined.",
+            "errorCode": "UNKNOWN_JUDGE_MODEL"
+          }
+        ]
+      }
+    }
+  ]
+}

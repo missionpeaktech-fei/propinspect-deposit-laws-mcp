@@ -11,11 +11,11 @@
  */
 const NOT_COVERED = /\b(not|isn't|is not|aren't)\s+covered\b/i;
 
-const op = (span) => span.attributes?.["gen_ai.operation.name"];
-const event = (span, name) => span.events?.find((e) => e.name === name)?.attributes ?? {};
+export const op = (span) => span.attributes?.["gen_ai.operation.name"];
+export const event = (span, name) => span.events?.find((e) => e.name === name)?.attributes ?? {};
 
 /** The agent's final answer: the gen_ai.choice message on the invoke_agent span. */
-function finalAnswer(spans) {
+export function finalAnswer(spans) {
   const agent = spans.find((s) => op(s) === "invoke_agent");
   return agent ? String(event(agent, "gen_ai.choice").message ?? "") : null;
 }

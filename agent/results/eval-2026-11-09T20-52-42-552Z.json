@@ -1,0 +1,235 @@
+{
+  "checkFile": "check-2026-11-09T20-34-10-578Z.json",
+  "evaluators": [
+    "claude_judge_haiku55-z7kX76GX1q",
+    "claude_judge_opus55-4jehcqCQeI"
+  ],
+  "totals": [
+    {
+      "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+      "results": 6,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "usd": 0.058724
+    },
+    {
+      "evaluatorId": "claude_judge_opus55-4jehcqCQeI",
+      "results": 6,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "usd": 0.060483999999999996
+    }
+  ],
+  "rows": [
+    {
+      "id": "wa-deadline",
+      "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline",
+      "regexPass": true,
+      "results": {
+        "claude_judge_haiku55-z7kX76GX1q": [
+          {
+            "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+            "evaluatorName": "claude_judge_haiku55",
+            "explanation": "The answer correctly states the 30-day deadline after termination and vacation, covering both the refund and the itemized statement with documentation. It also correctly notes that this replaced the 21-day rule in July 2023, and the penalty details match the tool result. It cites the propinspect.net link with its review date, includes the not-legal-advice disclaimer, and every assertion holds. [claude-opus-5-5: 1381 in / 134 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ],
+        "claude_judge_opus55-4jehcqCQeI": [
+          {
+            "evaluatorId": "claude_judge_opus55-4jehcqCQeI",
+            "evaluatorName": "claude_judge_opus55",
+            "explanation": "The answer correctly gives the 30-day deadline after termination and vacation, covering both the refund and the itemized statement with documentation. Its extra details all match the tool output: it replaced 21 days in July 2023, the full deposit is the penalty for lateness, up to 2x applies for intentional refusal, and the prevailing party gets fees. It cites the propinspect.net link with the review date and includes the disclaimer, so all assertions hold. [claude-opus-5-5: 1381 in / 159 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": "nv-cap",
+      "sessionId": "check-2026-11-09T20-34-10-578Z-nv-cap",
+      "regexPass": true,
+      "results": {
+        "claude_judge_haiku55-z7kX76GX1q": [
+          {
+            "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+            "evaluatorName": "claude_judge_haiku55",
+            "explanation": "The answer correctly states Nevada's 3-month rent cap, which covers all deposits, surety bonds, and prepaid last month's rent, and this matches the tool results and the expected answer. It cites the propinspect.net Nevada link with its 2026-10-12 review date and includes a not-legal-advice disclaimer, so all assertions hold. [claude-opus-5-5: 1251 in / 129 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-nv-cap"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ],
+        "claude_judge_opus55-4jehcqCQeI": [
+          {
+            "evaluatorId": "claude_judge_opus55-4jehcqCQeI",
+            "evaluatorName": "claude_judge_opus55",
+            "explanation": "The answer correctly states Nevada's cap of 3 months' rent covering all deposits, surety bonds, and prepaid last month's rent, which matches the tool results. It cites the propinspect.net link with the 2026-10-12 review date and includes the not-legal-advice disclaimer, so all assertions hold. [claude-opus-5-5: 1251 in / 118 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-nv-cap"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ca-vs-tx",
+      "sessionId": "check-2026-11-09T20-34-10-578Z-ca-vs-tx",
+      "regexPass": true,
+      "results": {
+        "claude_judge_haiku55-z7kX76GX1q": [
+          {
+            "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+            "evaluatorName": "claude_judge_haiku55",
+            "explanation": "The answer correctly gives 21 days for California and 30 days for Texas (with the forwarding-address condition and the bad-faith presumption, both supported by the tool results), and the 9-day difference is accurate. It cites both guides and includes the general-information disclaimer, so all assertions hold. [claude-opus-5-5: 1973 in / 110 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-ca-vs-tx"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ],
+        "claude_judge_opus55-4jehcqCQeI": [
+          {
+            "evaluatorId": "claude_judge_opus55-4jehcqCQeI",
+            "evaluatorName": "claude_judge_opus55",
+            "explanation": "The answer correctly gives 21 days for California and 30 days for Texas, which match the tool results. Its added details (forwarding-address condition, presumption of bad faith, the 9-day difference) are also accurate. It cites both guides and includes the general-information disclaimer, so all assertions hold. [claude-opus-5-5: 1973 in / 111 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-ca-vs-tx"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": "covered-states",
+      "sessionId": "check-2026-11-09T20-34-10-578Z-covered-states",
+      "regexPass": true,
+      "results": {
+        "claude_judge_haiku55-z7kX76GX1q": [
+          {
+            "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+            "evaluatorName": "claude_judge_haiku55",
+            "explanation": "The answer matches the tool result: it lists all 50 states and the 2026-08-27 to 2026-10-12 review range, and it correctly says DC and the territories aren't covered, as the expected answer states. Both assertions hold: the list came from the tool, and the answer says all 50 states are covered. [claude-opus-5-5: 1039 in / 397 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-covered-states"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ],
+        "claude_judge_opus55-4jehcqCQeI": [
+          {
+            "evaluatorId": "claude_judge_opus55-4jehcqCQeI",
+            "evaluatorName": "claude_judge_opus55",
+            "explanation": "The answer lists exactly the 50 states the tool returned, with the correct 2026-08-27 to 2026-10-12 review window, and correctly notes that DC and the territories are not covered, matching the expected answer. Both assertions hold: the list came from the tool, and the answer says all 50 states are covered. The closing lines about what the assistant can look up describe its own capabilities rather than deposit-law facts, so they don't contradict anything. [claude-opus-5-5: 1039 in / 493 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-covered-states"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": "dc-not-covered",
+      "sessionId": "check-2026-11-09T20-34-10-578Z-dc-not-covered",
+      "regexPass": true,
+      "results": {
+        "claude_judge_haiku55-z7kX76GX1q": [
+          {
+            "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+            "evaluatorName": "claude_judge_haiku55",
+            "explanation": "The answer says plainly that Washington DC is not covered, which matches the tool result, and it gives no deadline or day count. The referrals to the DC Office of the Tenant Advocate and the Attorney General's office are general pointers, not invented legal facts. [claude-opus-5-5: 699 in / 97 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-dc-not-covered"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ],
+        "claude_judge_opus55-4jehcqCQeI": [
+          {
+            "evaluatorId": "claude_judge_opus55-4jehcqCQeI",
+            "evaluatorName": "claude_judge_opus55",
+            "explanation": "The answer plainly states DC isn't covered, matching the tool result, and gives no deadline or number of days. The referral to the DC Office of the Tenant Advocate and the Attorney General is a harmless suggestion, not a made-up fact about the law. [claude-opus-5-5: 699 in / 97 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-dc-not-covered"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": "CONTROL wa-tampered",
+      "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline-tampered",
+      "regexPass": false,
+      "results": {
+        "claude_judge_haiku55-z7kX76GX1q": [
+          {
+            "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+            "evaluatorName": "claude_judge_haiku55",
+            "explanation": "The answer states 21 days, which contradicts the tool result and the expected answer: the deadline is 30 days, and the old 21-day rule was replaced in July 2023. It also fails the assertions requiring a propinspect.net citation with its review date and a general-information/not-legal-advice disclaimer. [claude-opus-5-5: 1188 in / 113 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline-tampered"
+              }
+            },
+            "value": 0,
+            "label": "FAIL"
+          }
+        ],
+        "claude_judge_opus55-4jehcqCQeI": [
+          {
+            "evaluatorId": "claude_judge_opus55-4jehcqCQeI",
+            "evaluatorName": "claude_judge_opus55",
+            "explanation": "The answer says 21 days, but the tool results say 30 days; 21 days is the old rule replaced in July 2023. It fails the 30-day assertion, and it also fails the citation/review-date and not-legal-advice assertions. [claude-opus-5-5: 1188 in / 90 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline-tampered"
+              }
+            },
+            "value": 0,
+            "label": "FAIL"
+          }
+        ]
+      }
+    }
+  ]
+}

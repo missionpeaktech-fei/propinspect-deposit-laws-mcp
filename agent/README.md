@@ -25,3 +25,4 @@ npm run eval -- Builtin.Helpfulness deposit_law_hard_rules-<id>   # any evaluato
 - `src/cases.ts`: the 5 questions with their ground truth (expected answer, assertions, expected tools), shared by `check.ts` and `evaluate.ts`.
 - `src/evaluate.ts`: pulls the newest check run's sessions from CloudWatch and runs `Evaluate` per session and evaluator, plus a tampered negative control; prints a table with token cost and saves `results/eval-*.json`.
 - `evaluators/deterministic/index.mjs`: the code-based evaluator's Lambda (hard rules, no LLM), unit-tested in `test/`.
+- `evaluators/claude-judge/index.mjs`: Claude as the judge via the Anthropic API (key from Secrets Manager, model from `JUDGE_MODEL`), bundled by `scripts/build-judge.sh`.

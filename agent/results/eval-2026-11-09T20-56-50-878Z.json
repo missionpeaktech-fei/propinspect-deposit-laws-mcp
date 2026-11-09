@@ -1,0 +1,899 @@
+{
+  "checkFile": "check-2026-11-09T20-34-10-578Z.json",
+  "evaluators": [
+    "Builtin.Correctness",
+    "Builtin.GoalSuccessRate",
+    "Builtin.Helpfulness",
+    "Builtin.TrajectoryAnyOrderMatch",
+    "deposit_law_hard_rules-47XOClErAk",
+    "claude_judge_haiku55-z7kX76GX1q",
+    "claude_judge_opus55-4jehcqCQeI"
+  ],
+  "totals": [
+    {
+      "evaluatorId": "Builtin.Correctness",
+      "results": 6,
+      "inputTokens": 3934,
+      "outputTokens": 705,
+      "usd": 0.0179016
+    },
+    {
+      "evaluatorId": "Builtin.GoalSuccessRate",
+      "results": 6,
+      "inputTokens": 5953,
+      "outputTokens": 655,
+      "usd": 0.0221472
+    },
+    {
+      "evaluatorId": "Builtin.Helpfulness",
+      "results": 6,
+      "inputTokens": 8936,
+      "outputTokens": 1029,
+      "usd": 0.033794399999999995
+    },
+    {
+      "evaluatorId": "Builtin.TrajectoryAnyOrderMatch",
+      "results": 6,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "usd": 0
+    },
+    {
+      "evaluatorId": "deposit_law_hard_rules-47XOClErAk",
+      "results": 6,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "usd": 0.009000000000000001
+    },
+    {
+      "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+      "results": 6,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "usd": 0.010319600000000002
+    },
+    {
+      "evaluatorId": "claude_judge_opus55-4jehcqCQeI",
+      "results": 6,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "usd": 0.05850400000000001
+    }
+  ],
+  "rows": [
+    {
+      "id": "wa-deadline",
+      "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline",
+      "regexPass": true,
+      "results": {
+        "Builtin.Correctness": [
+          {
+            "evaluatorId": "Builtin.Correctness",
+            "evaluatorName": "Builtin.Correctness",
+            "explanation": "The agent response correctly states the 30-day deadline after tenancy ends and tenant vacates, which matches the expected response. The agent also correctly mentions returning the deposit and providing a statement of what was retained, matching the expected response's core content. The agent provides additional details (penalty for missing deadline, attorney's fees, source URL, legal disclaimer) which are acceptable extras. The source cited matches the expected response (propinspect.net Washington guide). The core factual content is accurate and complete.",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline",
+                "traceId": "6af22e4479ce1be6f0b91fbcf54820f8"
+              }
+            },
+            "value": 1,
+            "label": "Correct",
+            "tokenUsage": {
+              "inputTokens": 697,
+              "outputTokens": 125,
+              "totalTokens": 822
+            },
+            "ignoredReferenceInputFields": [
+              "assertions",
+              "expectedTrajectory"
+            ]
+          }
+        ],
+        "Builtin.GoalSuccessRate": [
+          {
+            "evaluatorId": "Builtin.GoalSuccessRate",
+            "evaluatorName": "Builtin.GoalSuccessRate",
+            "explanation": "The agent used the deposit-laws___get_deposit_rules tool with state='WA', satisfying the first assertion. The answer clearly states 30 days as the deadline, satisfying the second assertion. The answer cites the propinspect.net URL and mentions 'last reviewed 2026-08-27', satisfying the third assertion. The answer ends with 'This is general information, not legal advice,' satisfying the fourth assertion. All success assertions are met.",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline"
+              }
+            },
+            "value": 1,
+            "label": "Yes",
+            "tokenUsage": {
+              "inputTokens": 1062,
+              "outputTokens": 123,
+              "totalTokens": 1185
+            },
+            "ignoredReferenceInputFields": [
+              "expectedResponse",
+              "expectedTrajectory"
+            ]
+          }
+        ],
+        "Builtin.Helpfulness": [
+          {
+            "evaluatorId": "Builtin.Helpfulness",
+            "evaluatorName": "Builtin.Helpfulness",
+            "explanation": "The user asked for the deposit return deadline in Washington. The assistant correctly extracts the key answer (30 days after tenancy ends and vacating) from the tool result, adds useful context about the requirements (refund + written statement with documentation), notes the change from the old 21-day deadline, and includes relevant penalty information for missed deadlines. It also cites the source and includes an appropriate legal disclaimer. The response is accurate relative to the tool output, directly answers the question, and provides additional relevant context without unnecessary detours. This is comprehensive and actionable, moving the user fully towards their goal.",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline",
+                "traceId": "6af22e4479ce1be6f0b91fbcf54820f8"
+              }
+            },
+            "value": 0.83,
+            "label": "Very Helpful",
+            "tokenUsage": {
+              "inputTokens": 1547,
+              "outputTokens": 158,
+              "totalTokens": 1705
+            },
+            "ignoredReferenceInputFields": [
+              "assertions",
+              "expectedResponse",
+              "expectedTrajectory"
+            ]
+          }
+        ],
+        "Builtin.TrajectoryAnyOrderMatch": [
+          {
+            "evaluatorId": "Builtin.TrajectoryAnyOrderMatch",
+            "evaluatorName": "Builtin.TrajectoryAnyOrderMatch",
+            "explanation": "Any-order match: All expected tools ['deposit-laws___get_deposit_rules'] found in actual ['deposit-laws___get_deposit_rules']",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline"
+              }
+            },
+            "value": 1,
+            "label": "Yes",
+            "ignoredReferenceInputFields": [
+              "assertions",
+              "expectedResponse"
+            ]
+          }
+        ],
+        "deposit_law_hard_rules-47XOClErAk": [
+          {
+            "evaluatorId": "deposit_law_hard_rules-47XOClErAk",
+            "evaluatorName": "deposit_law_hard_rules",
+            "explanation": "All hard rules hold (tools: deposit-laws___get_deposit_rules).",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ],
+        "claude_judge_haiku55-z7kX76GX1q": [
+          {
+            "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+            "evaluatorName": "claude_judge_haiku55",
+            "explanation": "The answer correctly gives the 30-day return deadline after termination and vacation, matching the tool result and expected answer. It accurately notes the July 2023 change from 21 days, the penalties, cites the propinspect.net source with its review date, and includes the general-information disclaimer. All assertions hold and no unsupported facts appear. [claude-haiku-5-5: 1381 in / 122 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ],
+        "claude_judge_opus55-4jehcqCQeI": [
+          {
+            "evaluatorId": "claude_judge_opus55-4jehcqCQeI",
+            "evaluatorName": "claude_judge_opus55",
+            "explanation": "The answer correctly states the 30-day deadline, the refund plus statement and documentation requirement, and the July 2023 change from 21 days, all matching the tool result and expected answer. The penalty details also match the tool output. All assertions hold: the tool lookup, 30 days, the propinspect.net link with its review date, and the not-legal-advice disclaimer. [claude-opus-5-5: 1381 in / 133 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": "nv-cap",
+      "sessionId": "check-2026-11-09T20-34-10-578Z-nv-cap",
+      "regexPass": true,
+      "results": {
+        "Builtin.Correctness": [
+          {
+            "evaluatorId": "Builtin.Correctness",
+            "evaluatorName": "Builtin.Correctness",
+            "explanation": "The agent response correctly states that Nevada's security deposit cap is 3 months' rent, which matches the expected response. The agent also cites the same source (propinspect.net Nevada guide) along with the specific Nevada Revised Statutes § 118A.242. The additional details about surety bonds and prepaid last month's rent being included in the cap are supplementary information that doesn't contradict the expected response. The core factual answer is accurate and complete.",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-nv-cap",
+                "traceId": "6af22e4ac51816149fdb2235563ba819"
+              }
+            },
+            "value": 1,
+            "label": "Correct",
+            "tokenUsage": {
+              "inputTokens": 611,
+              "outputTokens": 123,
+              "totalTokens": 734
+            },
+            "ignoredReferenceInputFields": [
+              "assertions",
+              "expectedTrajectory"
+            ]
+          }
+        ],
+        "Builtin.GoalSuccessRate": [
+          {
+            "evaluatorId": "Builtin.GoalSuccessRate",
+            "evaluatorName": "Builtin.GoalSuccessRate",
+            "explanation": "The agent used the deposit-laws tool with state='NV' to look up Nevada's rules. The response correctly states the cap is 3 months' rent. It cites the propinspect.net URL with the review date (2026-10-12). It includes a disclaimer that this is general information, not legal advice. All four success assertions are satisfied.",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-nv-cap"
+              }
+            },
+            "value": 1,
+            "label": "Yes",
+            "tokenUsage": {
+              "inputTokens": 958,
+              "outputTokens": 99,
+              "totalTokens": 1057
+            },
+            "ignoredReferenceInputFields": [
+              "expectedResponse",
+              "expectedTrajectory"
+            ]
+          }
+        ],
+        "Builtin.Helpfulness": [
+          {
+            "evaluatorId": "Builtin.Helpfulness",
+            "evaluatorName": "Builtin.Helpfulness",
+            "explanation": "The user asked a direct question about Nevada's security deposit cap. The tool returned clear data: 3 months' rent maximum, covering all security combined including surety bonds and prepaid last month's rent. The assistant accurately and concisely summarized this, provided the source citation, and included an appropriate disclaimer that this isn't legal advice. The response directly answers the question with the key detail (that it covers all deposit types combined) and doesn't add unnecessary or irrelevant information. This fully satisfies the user's immediate goal of knowing the deposit cap.",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-nv-cap",
+                "traceId": "6af22e4ac51816149fdb2235563ba819"
+              }
+            },
+            "value": 0.83,
+            "label": "Very Helpful",
+            "tokenUsage": {
+              "inputTokens": 1457,
+              "outputTokens": 148,
+              "totalTokens": 1605
+            },
+            "ignoredReferenceInputFields": [
+              "assertions",
+              "expectedResponse",
+              "expectedTrajectory"
+            ]
+          }
+        ],
+        "Builtin.TrajectoryAnyOrderMatch": [
+          {
+            "evaluatorId": "Builtin.TrajectoryAnyOrderMatch",
+            "evaluatorName": "Builtin.TrajectoryAnyOrderMatch",
+            "explanation": "Any-order match: All expected tools ['deposit-laws___get_deposit_rules'] found in actual ['deposit-laws___get_deposit_rules']",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-nv-cap"
+              }
+            },
+            "value": 1,
+            "label": "Yes",
+            "ignoredReferenceInputFields": [
+              "assertions",
+              "expectedResponse"
+            ]
+          }
+        ],
+        "deposit_law_hard_rules-47XOClErAk": [
+          {
+            "evaluatorId": "deposit_law_hard_rules-47XOClErAk",
+            "evaluatorName": "deposit_law_hard_rules",
+            "explanation": "All hard rules hold (tools: deposit-laws___get_deposit_rules).",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-nv-cap"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ],
+        "claude_judge_haiku55-z7kX76GX1q": [
+          {
+            "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+            "evaluatorName": "claude_judge_haiku55",
+            "explanation": "The answer correctly states Nevada's cap of 3 months' rent covering all security combined, matching the tool result and expected answer. It cites the propinspect.net link with the 2026-10-12 review date, includes the general-information disclaimer, and the agent used the deposit-laws tool as required. [claude-haiku-5-5: 1251 in / 110 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-nv-cap"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ],
+        "claude_judge_opus55-4jehcqCQeI": [
+          {
+            "evaluatorId": "claude_judge_opus55-4jehcqCQeI",
+            "evaluatorName": "claude_judge_opus55",
+            "explanation": "The answer correctly states Nevada's 3 months' rent cap, which covers all security combined including surety bonds and prepaid last month's rent, and this matches the tool results. It cites the propinspect.net link with the 2026-10-12 review date and includes the general-information disclaimer, so all assertions hold. [claude-opus-5-5: 1251 in / 115 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-nv-cap"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ca-vs-tx",
+      "sessionId": "check-2026-11-09T20-34-10-578Z-ca-vs-tx",
+      "regexPass": true,
+      "results": {
+        "Builtin.Correctness": [
+          {
+            "evaluatorId": "Builtin.Correctness",
+            "evaluatorName": "Builtin.Correctness",
+            "explanation": "The agent response correctly states California's deadline is 21 days and Texas's deadline is 30 days, matching the expected response. It also correctly notes the forwarding address requirement for Texas. The sources cited (propinspect.net California and Texas guides) align with what the expected response references. The agent provides additional detail (legal code citations, bad faith presumption, the 9-day difference calculation) which is acceptable extra context. All core factual content matches the expected response.",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-ca-vs-tx",
+                "traceId": "6af22e50d55b216e1306dd22c4799204"
+              }
+            },
+            "value": 1,
+            "label": "Correct",
+            "tokenUsage": {
+              "inputTokens": 767,
+              "outputTokens": 123,
+              "totalTokens": 890
+            },
+            "ignoredReferenceInputFields": [
+              "assertions",
+              "expectedTrajectory"
+            ]
+          }
+        ],
+        "Builtin.GoalSuccessRate": [
+          {
+            "evaluatorId": "Builtin.GoalSuccessRate",
+            "evaluatorName": "Builtin.GoalSuccessRate",
+            "explanation": "The agent's response clearly states 21 days for California and 30 days for Texas, satisfying the first assertion. It cites both sources (California Civil Code § 1950.5 via propinspect.net/security-deposit-laws/california and Texas Property Code §§ 92.101–92.111 via propinspect.net/security-deposit-laws/texas), satisfying the second assertion. The response ends with 'This is general information, not legal advice,' satisfying the third assertion. All three success assertions are met.",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-ca-vs-tx"
+              }
+            },
+            "value": 1,
+            "label": "Yes",
+            "tokenUsage": {
+              "inputTokens": 1591,
+              "outputTokens": 143,
+              "totalTokens": 1734
+            },
+            "ignoredReferenceInputFields": [
+              "expectedResponse",
+              "expectedTrajectory"
+            ]
+          }
+        ],
+        "Builtin.Helpfulness": [
+          {
+            "evaluatorId": "Builtin.Helpfulness",
+            "evaluatorName": "Builtin.Helpfulness",
+            "explanation": "The user asked for a comparison of deposit return deadlines in CA and TX. The assistant accurately extracted the relevant deadline information from both tool outputs (21 days for CA, 30 days for TX), included key conditions (itemized statement, forwarding address requirement, bad-faith presumption), cited sources, and explicitly compared the two (9-day difference). It stayed focused on the specific question asked rather than including extraneous details like deposit caps or move-in record rules. The response is clear, well-organized, directly answers the user's comparative question, and includes an appropriate disclaimer. This fully satisfies the user's goal with comprehensive and actionable information in a concise format.",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-ca-vs-tx",
+                "traceId": "6af22e50d55b216e1306dd22c4799204"
+              }
+            },
+            "value": 0.83,
+            "label": "Very Helpful",
+            "tokenUsage": {
+              "inputTokens": 2068,
+              "outputTokens": 176,
+              "totalTokens": 2244
+            },
+            "ignoredReferenceInputFields": [
+              "assertions",
+              "expectedResponse",
+              "expectedTrajectory"
+            ]
+          }
+        ],
+        "Builtin.TrajectoryAnyOrderMatch": [
+          {
+            "evaluatorId": "Builtin.TrajectoryAnyOrderMatch",
+            "evaluatorName": "Builtin.TrajectoryAnyOrderMatch",
+            "explanation": "Any-order match: All expected tools ['deposit-laws___get_deposit_rules'] found in actual ['deposit-laws___get_deposit_rules', 'deposit-laws___get_deposit_rules']",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-ca-vs-tx"
+              }
+            },
+            "value": 1,
+            "label": "Yes",
+            "ignoredReferenceInputFields": [
+              "assertions",
+              "expectedResponse"
+            ]
+          }
+        ],
+        "deposit_law_hard_rules-47XOClErAk": [
+          {
+            "evaluatorId": "deposit_law_hard_rules-47XOClErAk",
+            "evaluatorName": "deposit_law_hard_rules",
+            "explanation": "All hard rules hold (tools: deposit-laws___get_deposit_rules, deposit-laws___get_deposit_rules).",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-ca-vs-tx"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ],
+        "claude_judge_haiku55-z7kX76GX1q": [
+          {
+            "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+            "evaluatorName": "claude_judge_haiku55",
+            "explanation": "The answer correctly gives 21 days for California and 30 days for Texas, matching the tool results and expected answer. It cites both propinspect.net guides and includes the general-information-not-legal-advice disclaimer. The Texas forwarding-address condition and bad-faith presumption are also accurately reported, and the 9-day difference is correct. [claude-haiku-5-5: 1973 in / 126 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-ca-vs-tx"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ],
+        "claude_judge_opus55-4jehcqCQeI": [
+          {
+            "evaluatorId": "claude_judge_opus55-4jehcqCQeI",
+            "evaluatorName": "claude_judge_opus55",
+            "explanation": "The answer correctly gives 21 days for California and 30 days for Texas, including the forwarding-address condition and the presumption of bad faith after 30 days, all of which match the tool results. It cites both guides and includes the general-information disclaimer, and the 9-day difference is correct. [claude-opus-5-5: 1973 in / 106 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-ca-vs-tx"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": "covered-states",
+      "sessionId": "check-2026-11-09T20-34-10-578Z-covered-states",
+      "regexPass": true,
+      "results": {
+        "Builtin.Correctness": [
+          {
+            "evaluatorId": "Builtin.Correctness",
+            "evaluatorName": "Builtin.Correctness",
+            "explanation": "The agent response correctly states that all 50 US states are covered and that Washington DC and US territories are not covered. This matches the expected response exactly on the core facts. The agent provides additional details (listing all state abbreviations, mentioning review dates, offering to look up specific deposit information, and adding a legal disclaimer), but these are supplementary details that don't contradict the expected response. The core answer - 50 states covered, DC and territories not covered - is accurate.",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-covered-states",
+                "traceId": "6af22e56fe79a393fda3cede8401cb0f"
+              }
+            },
+            "value": 1,
+            "label": "Correct",
+            "tokenUsage": {
+              "inputTokens": 747,
+              "outputTokens": 122,
+              "totalTokens": 869
+            },
+            "ignoredReferenceInputFields": [
+              "assertions",
+              "expectedTrajectory"
+            ]
+          }
+        ],
+        "Builtin.GoalSuccessRate": [
+          {
+            "evaluatorId": "Builtin.GoalSuccessRate",
+            "evaluatorName": "Builtin.GoalSuccessRate",
+            "explanation": "The agent called the `deposit-laws___list_covered_states` tool to retrieve the list of covered states, satisfying the first assertion. The tool returned all 50 states, and the agent explicitly stated 'I can answer deposit questions for 50 states' in its response, satisfying the second assertion.",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-covered-states"
+              }
+            },
+            "value": 1,
+            "label": "Yes",
+            "tokenUsage": {
+              "inputTokens": 859,
+              "outputTokens": 87,
+              "totalTokens": 946
+            },
+            "ignoredReferenceInputFields": [
+              "expectedResponse",
+              "expectedTrajectory"
+            ]
+          }
+        ],
+        "Builtin.Helpfulness": [
+          {
+            "evaluatorId": "Builtin.Helpfulness",
+            "evaluatorName": "Builtin.Helpfulness",
+            "explanation": "The user asked which states the assistant can answer deposit questions for. The tool returned the full list of 50 states and a review period. The assistant accurately relayed the list, clearly noted that DC and US territories are not covered (a useful clarification not explicitly in the tool output but reasonable inference), mentioned the review period, and proactively informed the user about what kinds of follow-up questions it can answer (deposit cap, return deadline, penalties, move-in condition). It also added an appropriate disclaimer that this is general information, not legal advice. This goes beyond simply answering the question by anticipating the user's likely next questions and clarifying scope limitations, which helps the user plan their next query efficiently. The response is well organized and directly addresses the user's goal of understanding coverage scope, while also setting up next steps.",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-covered-states",
+                "traceId": "6af22e56fe79a393fda3cede8401cb0f"
+              }
+            },
+            "value": 1,
+            "label": "Above And Beyond",
+            "tokenUsage": {
+              "inputTokens": 1357,
+              "outputTokens": 204,
+              "totalTokens": 1561
+            },
+            "ignoredReferenceInputFields": [
+              "assertions",
+              "expectedResponse",
+              "expectedTrajectory"
+            ]
+          }
+        ],
+        "Builtin.TrajectoryAnyOrderMatch": [
+          {
+            "evaluatorId": "Builtin.TrajectoryAnyOrderMatch",
+            "evaluatorName": "Builtin.TrajectoryAnyOrderMatch",
+            "explanation": "Any-order match: All expected tools ['deposit-laws___list_covered_states'] found in actual ['deposit-laws___list_covered_states']",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-covered-states"
+              }
+            },
+            "value": 1,
+            "label": "Yes",
+            "ignoredReferenceInputFields": [
+              "assertions",
+              "expectedResponse"
+            ]
+          }
+        ],
+        "deposit_law_hard_rules-47XOClErAk": [
+          {
+            "evaluatorId": "deposit_law_hard_rules-47XOClErAk",
+            "evaluatorName": "deposit_law_hard_rules",
+            "explanation": "All hard rules hold (tools: deposit-laws___list_covered_states).",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-covered-states"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ],
+        "claude_judge_haiku55-z7kX76GX1q": [
+          {
+            "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+            "evaluatorName": "claude_judge_haiku55",
+            "explanation": "The answer lists the same 50 states as the list_covered_states tool result, and the count matches the expected answer that all 50 states are covered, with DC and territories excluded. The review date range matches the tool output. The closing note about what the agent can look up is not backed by the tool results shown, but it does not contradict them. [claude-haiku-5-5: 1039 in / 573 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-covered-states"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ],
+        "claude_judge_opus55-4jehcqCQeI": [
+          {
+            "evaluatorId": "claude_judge_opus55-4jehcqCQeI",
+            "evaluatorName": "claude_judge_opus55",
+            "explanation": "The agent called list_covered_states, and the answer reproduces all 50 states and the 2026-08-27 to 2026-10-12 review window exactly as the tool returned them. It correctly says DC and the territories are not covered, matching the expected answer and both assertions. The remaining remarks describe the assistant's own capabilities rather than legal facts, so they don't contradict anything. [claude-opus-5-5: 1039 in / 429 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-covered-states"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": "dc-not-covered",
+      "sessionId": "check-2026-11-09T20-34-10-578Z-dc-not-covered",
+      "regexPass": true,
+      "results": {
+        "Builtin.Correctness": [
+          {
+            "evaluatorId": "Builtin.Correctness",
+            "evaluatorName": "Builtin.Correctness",
+            "explanation": "The agent's response correctly conveys the core message that Washington DC is not covered by the service, and therefore no deadline can be provided. This matches the expected response exactly in terms of the key factual content. The agent adds additional helpful suggestions (DC Office of the Tenant Advocate, DC Attorney General's office) and a disclaimer about legal advice, but these are supplementary details that don't contradict the expected response. The core answer - DC is not covered, no deadline can be given - is accurately communicated.",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-dc-not-covered",
+                "traceId": "6af22e5db4e19a55e2e0fad89cbec395"
+              }
+            },
+            "value": 1,
+            "label": "Correct",
+            "tokenUsage": {
+              "inputTokens": 571,
+              "outputTokens": 128,
+              "totalTokens": 699
+            },
+            "ignoredReferenceInputFields": [
+              "assertions",
+              "expectedTrajectory"
+            ]
+          }
+        ],
+        "Builtin.GoalSuccessRate": [
+          {
+            "evaluatorId": "Builtin.GoalSuccessRate",
+            "evaluatorName": "Builtin.GoalSuccessRate",
+            "explanation": "The agent clearly stated that Washington DC is not covered by the service (only 50 US states are covered). The agent also did not provide any deadline or number of days for the security deposit return in DC. Both success assertions are satisfied.",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-dc-not-covered"
+              }
+            },
+            "value": 1,
+            "label": "Yes",
+            "tokenUsage": {
+              "inputTokens": 577,
+              "outputTokens": 69,
+              "totalTokens": 646
+            },
+            "ignoredReferenceInputFields": [
+              "expectedResponse",
+              "expectedTrajectory"
+            ]
+          }
+        ],
+        "Builtin.Helpfulness": [
+          {
+            "evaluatorId": "Builtin.Helpfulness",
+            "evaluatorName": "Builtin.Helpfulness",
+            "explanation": "The tool returned that DC is not covered by this service. The assistant honestly relays this limitation, avoids guessing or fabricating an answer, and provides a concrete, actionable next step by directing the user to the DC Office of the Tenant Advocate and the DC Attorney General's office, which are relevant resources for finding the actual deposit return deadline. It also appropriately caveats that this is general information, not legal advice. Given the tool's limitation, the assistant did about as much as possible to help the user progress toward their goal - it didn't just say 'not supported' but gave a clear path forward. This matches the 'Above And Beyond' criteria of getting the user as close as possible to their goal given the input's limitations.",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-dc-not-covered",
+                "traceId": "6af22e5db4e19a55e2e0fad89cbec395"
+              }
+            },
+            "value": 1,
+            "label": "Above And Beyond",
+            "tokenUsage": {
+              "inputTokens": 1108,
+              "outputTokens": 182,
+              "totalTokens": 1290
+            },
+            "ignoredReferenceInputFields": [
+              "assertions",
+              "expectedResponse",
+              "expectedTrajectory"
+            ]
+          }
+        ],
+        "Builtin.TrajectoryAnyOrderMatch": [
+          {
+            "evaluatorId": "Builtin.TrajectoryAnyOrderMatch",
+            "evaluatorName": "Builtin.TrajectoryAnyOrderMatch",
+            "explanation": "Any-order match: All expected tools ['deposit-laws___get_deposit_rules'] found in actual ['deposit-laws___get_deposit_rules']",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-dc-not-covered"
+              }
+            },
+            "value": 1,
+            "label": "Yes",
+            "ignoredReferenceInputFields": [
+              "assertions",
+              "expectedResponse"
+            ]
+          }
+        ],
+        "deposit_law_hard_rules-47XOClErAk": [
+          {
+            "evaluatorId": "deposit_law_hard_rules-47XOClErAk",
+            "evaluatorName": "deposit_law_hard_rules",
+            "explanation": "All hard rules hold (tools: deposit-laws___get_deposit_rules).",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-dc-not-covered"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ],
+        "claude_judge_haiku55-z7kX76GX1q": [
+          {
+            "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+            "evaluatorName": "claude_judge_haiku55",
+            "explanation": "The answer states plainly that DC is not covered, matching the tool result and expected answer, and gives no deadline or number of days. The referral to DC Office of the Tenant Advocate and AG's office is extra guidance not contradicting the tool results. [claude-haiku-5-5: 699 in / 94 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-dc-not-covered"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ],
+        "claude_judge_opus55-4jehcqCQeI": [
+          {
+            "evaluatorId": "claude_judge_opus55-4jehcqCQeI",
+            "evaluatorName": "claude_judge_opus55",
+            "explanation": "The answer plainly states DC isn't covered and gives no deadline, matching the tool result and the expected answer. The referral to DC agencies is reasonable extra guidance and invents no deposit-law facts. [claude-opus-5-5: 699 in / 82 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-dc-not-covered"
+              }
+            },
+            "value": 1,
+            "label": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "id": "CONTROL wa-tampered",
+      "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline-tampered",
+      "regexPass": false,
+      "results": {
+        "Builtin.Correctness": [
+          {
+            "evaluatorId": "Builtin.Correctness",
+            "evaluatorName": "Builtin.Correctness",
+            "explanation": "The agent response states 21 days, while the expected response states 30 days. This is a critical factual error - the specific number of days is the core answer to this query, and 21 days vs 30 days is a substantive difference that directly contradicts the expected response.",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline-tampered",
+                "traceId": "6af22e4479ce1be6f0b91fbcf54820f8"
+              }
+            },
+            "value": 0,
+            "label": "Incorrect",
+            "tokenUsage": {
+              "inputTokens": 541,
+              "outputTokens": 84,
+              "totalTokens": 625
+            },
+            "ignoredReferenceInputFields": [
+              "assertions",
+              "expectedTrajectory"
+            ]
+          }
+        ],
+        "Builtin.GoalSuccessRate": [
+          {
+            "evaluatorId": "Builtin.GoalSuccessRate",
+            "evaluatorName": "Builtin.GoalSuccessRate",
+            "explanation": "The agent did use the tool to look up Washington's deposit rules (first assertion satisfied). However, the agent's response states '21 days' as the deadline, when the tool result clearly shows the deadline is '30 days' (updated from the old 21 days in July 2023). This fails the second assertion. The agent also did not cite the propinspect.net link or its review date (third assertion failed), and did not include a disclaimer that the information is general and not legal advice (fourth assertion failed).",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline-tampered"
+              }
+            },
+            "value": 0,
+            "label": "No",
+            "tokenUsage": {
+              "inputTokens": 906,
+              "outputTokens": 134,
+              "totalTokens": 1040
+            },
+            "ignoredReferenceInputFields": [
+              "expectedResponse",
+              "expectedTrajectory"
+            ]
+          }
+        ],
+        "Builtin.Helpfulness": [
+          {
+            "evaluatorId": "Builtin.Helpfulness",
+            "evaluatorName": "Builtin.Helpfulness",
+            "explanation": "The tool result clearly states the deadline is 30 days (which replaced the old 21 days in July 2023). The assistant's response incorrectly states 21 days, directly contradicting the tool output. This gives the user wrong information about a legally significant deadline, which could lead to real-world consequences if they rely on it. Since tool output must take priority over any other knowledge, and the assistant failed to use the correct, current figure from the tool result, this response actively misleads the user and could cause them to act on outdated/incorrect information. This is not just unhelpful but actively harmful to the user's goal of knowing the correct deadline.",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline-tampered",
+                "traceId": "6af22e4479ce1be6f0b91fbcf54820f8"
+              }
+            },
+            "value": 0,
+            "label": "Not Helpful At All",
+            "tokenUsage": {
+              "inputTokens": 1399,
+              "outputTokens": 161,
+              "totalTokens": 1560
+            },
+            "ignoredReferenceInputFields": [
+              "assertions",
+              "expectedResponse",
+              "expectedTrajectory"
+            ]
+          }
+        ],
+        "Builtin.TrajectoryAnyOrderMatch": [
+          {
+            "evaluatorId": "Builtin.TrajectoryAnyOrderMatch",
+            "evaluatorName": "Builtin.TrajectoryAnyOrderMatch",
+            "explanation": "Any-order match: All expected tools ['deposit-laws___get_deposit_rules'] found in actual ['deposit-laws___get_deposit_rules']",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline-tampered"
+              }
+            },
+            "value": 1,
+            "label": "Yes",
+            "ignoredReferenceInputFields": [
+              "assertions",
+              "expectedResponse"
+            ]
+          }
+        ],
+        "deposit_law_hard_rules-47XOClErAk": [
+          {
+            "evaluatorId": "deposit_law_hard_rules-47XOClErAk",
+            "evaluatorName": "deposit_law_hard_rules",
+            "explanation": "missing fact \"30 days\"; no propinspect.net guide link; no not-legal-advice line",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline-tampered"
+              }
+            },
+            "value": 0,
+            "label": "FAIL"
+          }
+        ],
+        "claude_judge_haiku55-z7kX76GX1q": [
+          {
+            "evaluatorId": "claude_judge_haiku55-z7kX76GX1q",
+            "evaluatorName": "claude_judge_haiku55",
+            "explanation": "The answer states a 21-day return deadline, but the tool results say the deadline is 30 days (changed from 21 days in July 2023), and the expected answer is 30 days. The answer also fails the assertions to cite the propinspect.net source and review date and to note the general-information disclaimer. [claude-haiku-5-5: 1188 in / 108 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline-tampered"
+              }
+            },
+            "value": 0,
+            "label": "FAIL"
+          }
+        ],
+        "claude_judge_opus55-4jehcqCQeI": [
+          {
+            "evaluatorId": "claude_judge_opus55-4jehcqCQeI",
+            "evaluatorName": "claude_judge_opus55",
+            "explanation": "The answer gives 21 days, which is wrong: the tool results show the deadline is 30 days, and the old 21-day rule was replaced in July 2023. It also leaves out the propinspect.net source link and review date, and the general-information/not-legal-advice disclaimer. [claude-opus-5-5: 1188 in / 104 out]",
+            "context": {
+              "spanContext": {
+                "sessionId": "check-2026-11-09T20-34-10-578Z-wa-deadline-tampered"
+              }
+            },
+            "value": 0,
+            "label": "FAIL"
+          }
+        ]
+      }
+    }
+  ]
+}

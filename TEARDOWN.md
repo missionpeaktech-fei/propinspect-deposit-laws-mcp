@@ -13,7 +13,7 @@ POOL_ID=$(aws cognito-idp list-user-pools --max-results 20 --query "UserPools[?N
 
 ## Step 9: evaluations (delete before everything else)
 
-Nothing here costs money while idle; delete it anyway. Only one evaluator was created: the derived (Bedrock) judges
+Only the secret costs money while idle (about $0.40 a month); delete it all. The derived (Bedrock) judges
 were refused at creation, so none exist.
 
 ```bash
@@ -24,6 +24,15 @@ aws lambda delete-function --function-name handson-deposit-eval-checks
 aws logs delete-log-group --log-group-name /aws/lambda/handson-deposit-eval-checks
 aws iam delete-role-policy --role-name agentcore-handson-eval-lambda --policy-name write-own-logs
 aws iam delete-role --role-name agentcore-handson-eval-lambda
+# 2. The two Claude judges (option C): evaluators, Lambdas, log groups, role
+for name in claude_judge_opus55 claude_judge_haiku55; do
+  aws bedrock-agentcore-control delete-evaluator --evaluator-id "$(aws bedrock-agentcore-control list-evaluators --query "evaluators[?evaluatorName=='$name'].evaluatorId" --output text)"; done
+for f in handson-claude-judge handson-claude-judge-haiku; do
+  aws lambda delete-function --function-name $f; aws logs delete-log-group --log-group-name /aws/lambda/$f; done
+aws iam delete-role-policy --role-name agentcore-handson-eval-judge --policy-name logs-and-anthropic-key
+aws iam delete-role --role-name agentcore-handson-eval-judge
+# 3. The Anthropic key secret (the owner created it; 7-day recovery window, then gone). Also revoke the key in the Anthropic Console.
+aws secretsmanager delete-secret --secret-id agentcore-handson/anthropic-api-key --recovery-window-in-days 7
 ```
 
 ## Step 8: policy (delete next)
