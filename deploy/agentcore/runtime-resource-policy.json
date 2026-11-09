@@ -1,0 +1,20 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowOnlyTheGatewayRole",
+      "Effect": "Allow",
+      "Principal": { "AWS": "{{GATEWAY_ROLE_ARN}}" },
+      "Action": "bedrock-agentcore:InvokeAgentRuntime",
+      "Resource": "{{RUNTIME_ARN}}"
+    },
+    {
+      "Sid": "DenyEveryoneElseEvenAdmins",
+      "Effect": "Deny",
+      "Principal": { "AWS": "*" },
+      "Action": "bedrock-agentcore:InvokeAgentRuntime",
+      "Resource": "{{RUNTIME_ARN}}",
+      "Condition": { "ArnNotEquals": { "aws:PrincipalArn": "{{GATEWAY_ROLE_ARN}}" } }
+    }
+  ]
+}

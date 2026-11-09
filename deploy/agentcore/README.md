@@ -9,6 +9,10 @@ Reusable pieces for hosting an MCP server on Amazon Bedrock AgentCore Runtime. P
 | `runtime-permissions.json` | What the running server may do | Logs, traces, metrics only. AWS's sample role also allows Bedrock model calls; this server makes none, so they're left out (least privilege) |
 | `budget.json`, `budget-notifications.json` | $20/month budget, email at 80% actual and 100% forecast | Create before any other resource. A budget warns; a spend limit (AWS Settings, new AWS experience) is the hard stop |
 
+| `gateway-trust-policy.json` | Who may assume the Gateway's role | Only AgentCore, only this one gateway (`aws:SourceArn` = the gateway ARN, tightened after the gateway exists) |
+| `gateway-permissions.json` | What the Gateway may do | Invoke this one Runtime, nothing else |
+| `runtime-resource-policy.json` | Who may invoke the Runtime | Only the Gateway's role; an explicit Deny for every other principal, admins included, so nothing bypasses the gateway's sign-in and policy |
+
 ```bash
 # One-time: the budget (replace the email)
 sed 's/{{EMAIL}}/you@example.com/' deploy/agentcore/budget-notifications.json > /tmp/notify.json
@@ -21,3 +25,28 @@ AWS_PROFILE=agentcore AWS_REGION=us-east-2 deploy/agentcore/deploy.sh
 ```
 
 Inbound auth is IAM (SigV4) on purpose: people sign in at the AgentCore Gateway, which calls the Runtime with its own IAM role. Teardown: `../../TEARDOWN.md`. Notes and checks per step: `../../LEARNING-LOG.md`.
+
+## Gateway (step 4), one-time commands
+
+```bash
+# Cognito for machine-to-machine tokens: pool, domain, scope, client with secret (client_credentials)
+aws cognito-idp create-user-pool --pool-name agentcore-handson-gateway --user-pool-tags project=agentcore-handson
+aws cognito-idp create-user-pool-domain --user-pool-id $POOL --domain agentcore-handson-<random>
+aws cognito-idp create-resource-server --user-pool-id $POOL --identifier deposit-laws --name "Deposit-law MCP gateway" --scopes ScopeName=invoke,ScopeDescription=...
+aws cognito-idp create-user-pool-client --user-pool-id $POOL --client-name handson-m2m --generate-secret \
+  --allowed-o-auth-flows client_credentials --allowed-o-auth-scopes deposit-laws/invoke --allowed-o-auth-flows-user-pool-client
+# Keep the client secret in a 600-permission file outside the repo; never print it.
+
+# Gateway: MCP protocol, JWT sign-in that accepts only this client and scope
+aws bedrock-agentcore-control create-gateway --name deposit-laws-gateway --role-arn <gateway role> --protocol-type MCP \
+  --authorizer-type CUSTOM_JWT --authorizer-configuration '{"customJWTAuthorizer":{"discoveryUrl":"https://cognito-idp.<region>.amazonaws.com/<pool>/.well-known/openid-configuration","allowedClients":["<client id>"],"allowedScopes":["deposit-laws/invoke"]}}' \
+  --tags project=agentcore-handson
+
+# Target: the Runtime as an MCP server, called with the gateway's IAM role (SigV4, service bedrock-agentcore)
+aws bedrock-agentcore-control create-gateway-target --gateway-identifier <gateway id> --name deposit-laws \
+  --target-configuration '{"mcp":{"mcpServer":{"endpoint":"https://bedrock-agentcore.<region>.amazonaws.com/runtimes/<URL-encoded runtime ARN>/invocations?qualifier=DEFAULT"}}}' \
+  --credential-provider-configurations '[{"credentialProviderType":"GATEWAY_IAM_ROLE","credentialProvider":{"iamCredentialProvider":{"service":"bedrock-agentcore"}}}]'
+
+# Lock the Runtime to the gateway
+aws bedrock-agentcore-control put-resource-policy --resource-arn <runtime ARN> --policy file://runtime-resource-policy.json  # placeholders filled
+```

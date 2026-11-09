@@ -7,7 +7,33 @@ export AWS_PROFILE=agentcore AWS_REGION=us-east-2
 ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
 BUCKET=bedrock-agentcore-code-$ACCOUNT-us-east-2
 RUNTIME_ID=$(aws bedrock-agentcore-control list-agent-runtimes --query "agentRuntimes[?agentRuntimeName=='deposit_laws_mcp'].agentRuntimeId" --output text)
+GATEWAY_ID=$(aws bedrock-agentcore-control list-gateways --query "items[?name=='deposit-laws-gateway'].gatewayId" --output text)
+POOL_ID=$(aws cognito-idp list-user-pools --max-results 20 --query "UserPools[?Name=='agentcore-handson-gateway'].Id" --output text)
 ```
+
+## Step 4: Gateway and Cognito (delete these before step 3's)
+
+```bash
+# 1. Gateway targets, then the gateway
+for t in $(aws bedrock-agentcore-control list-gateway-targets --gateway-identifier "$GATEWAY_ID" --query 'items[].targetId' --output text); do
+  aws bedrock-agentcore-control delete-gateway-target --gateway-identifier "$GATEWAY_ID" --target-id "$t"; done
+sleep 20
+aws bedrock-agentcore-control delete-gateway --gateway-identifier "$GATEWAY_ID"
+
+# 2. The gateway's role
+aws iam delete-role-policy --role-name agentcore-deposit-laws-gateway --policy-name invoke-runtime
+aws iam delete-role --role-name agentcore-deposit-laws-gateway
+
+# 3. Cognito: the domain first, then the pool (deletes its client and scope)
+DOMAIN=$(aws cognito-idp describe-user-pool --user-pool-id "$POOL_ID" --query UserPool.Domain --output text)
+aws cognito-idp delete-user-pool-domain --user-pool-id "$POOL_ID" --domain "$DOMAIN"
+aws cognito-idp delete-user-pool --user-pool-id "$POOL_ID"
+
+# 4. The local client secret
+rm -f ~/.config/agentcore-handson/cognito.env
+```
+
+The Runtime's resource policy (only the gateway may invoke it) is deleted with the Runtime.
 
 ## Step 3: Runtime
 
@@ -42,4 +68,4 @@ aws resourcegroupstaggingapi get-resources --tag-filters Key=project,Values=agen
 aws resourcegroupstaggingapi get-resources --region us-east-1 --tag-filters Key=project,Values=agentcore-handson --query 'ResourceTagMappingList[].ResourceARN'
 ```
 
-Both should print `[]`. IAM roles don't appear in that API: `aws iam list-roles --query "Roles[?starts_with(RoleName,'agentcore-')].RoleName"` should be empty.
+Both should print `[]`. IAM roles and the Cognito domain don't appear in that API: `aws iam list-roles --query "Roles[?starts_with(RoleName,'agentcore-')].RoleName"` should be empty, and `aws cognito-idp list-user-pools --max-results 20` should not list `agentcore-handson-gateway`.
