@@ -105,3 +105,29 @@ What the docs say, checked before choosing the plan:
   - The desktop app's bundled `claude` binary is a Linux build for its VM and won't run on macOS, so `claude mcp add` wasn't an option from this session; writing `.mcp.json` is the documented equivalent.
   - **Check:** open a new Claude Code session in this folder, accept the trust prompt and approve `deposit-laws-gateway`, then ask "What's the deposit return deadline in Washington?" Expected: 30 days, cited to propinspect.net/security-deposit-laws/washington, through the `deposit-laws___get_deposit_rules` tool.
 - **Consulting note:** two ways for a client to give tools short-lived credentials: a **headers helper** (the client fetches a token each connection; simple, works with any IdP that has a token endpoint) or **MCP OAuth** (the client discovers the authorization server from the 401's `WWW-Authenticate` and signs the user in). Gateway supports both; machine clients usually take the first, human-facing apps the second.
+
+## Step 6: an agent that uses the tools through the Gateway (2026-11-09)
+
+- **Change from the brief: the model is Claude Sonnet 5.5 through the Anthropic API, not Bedrock.** The new project's Bedrock access was gated (Claude 5.5 "not available for this account", Anthropic use-case form pending, Nova quota 0), so Fei created a separate Anthropic API key for this project. The AgentCore parts (Gateway, Runtime, Policy, Observability) don't care which model calls them. Swapping to Bedrock later is one line in `agent/src/agent.ts` (Strands `BedrockModel`).
+- **Built:** `agent/`, its own package (Strands 1.24 needs `@anthropic-ai/sdk` 0.109; the server repo's evals use 1.x).
+  - `cognitoAuth.ts`: an MCP `AuthProvider` for the `StreamableHTTPClientTransport`. `token()` runs before every request (Cognito `client_credentials`, cached until a minute before expiry); `onUnauthorized()` drops the cache and the transport retries once. Unit tested, including that errors never echo the response body.
+  - `agent.ts`: Strands `Agent` + `AnthropicModel` (`claude-sonnet-5-5`, `maxTokens` 1024) + `McpClient` on the gateway URL. System prompt: tool results only, call a tool for every state, cite link and review date as returned, "not covered" means stop, end with "not legal advice".
+  - Secrets: `~/.config/agentcore-handson/anthropic.env`, `cognito.env`, `gateway.env`, all mode 600, read at start, never logged.
+- **Check (passed 5/5, `npm run check`, answers in `agent/results/`):**
+
+  | Question | Tool called | Time |
+  |---|---|---|
+  | Washington return deadline | `get_deposit_rules` | 6.0 s |
+  | Nevada maximum deposit | `get_deposit_rules` | 5.4 s |
+  | California vs Texas deadlines | `compare_states` | 6.4 s |
+  | Which states are covered | `list_covered_states` | 6.3 s |
+  | Washington DC (not covered) | `get_deposit_rules` → "isn't covered… I won't guess" | 5.4 s |
+
+  The first run scored 4/5: the DC answer was right ("Washington DC isn't covered") but the check's regex wanted the exact words "not covered". I fixed the check, not the prompt. **Lesson: when an eval fails, read the answer before changing the agent.**
+- **Grounding spot-check:** the WA answer mentioned "the old 21-day deadline (July 2023)" and "up to 2x". All of it is in the tool's own WA result, so the agent added nothing from memory.
+- **Strands vs AgentCore Harness:**
+  - **Strands (what we used):** open-source SDK; the agent loop runs in our code (here locally; on Runtime it would be our container or zip). Full control, any model provider (Anthropic API, Bedrock, OpenAI…), and it's testable like ordinary code.
+  - **AgentCore Harness:** the same Strands loop, but declared as configuration (model, system prompt, tools, skills, memory) and run by AgentCore; no code or container, and switching model or tools is a config change, not a redeploy. Models: Bedrock, OpenAI, Gemini, or anything behind LiteLLM, with provider keys held in AgentCore Identity. Strands only.
+  - **For clients:** start on Harness when the agent is "a prompt + tools + model" and the team wants managed ops; move to Strands-on-Runtime when they need custom control flow, a non-Strands framework, or code-level tests.
+- **Cost:** about 25 model calls across the two check runs plus one ask, roughly $0.30 on the Anthropic key (estimate, not measured); AWS a fraction of a cent.
+- **Doc pages:** [Strands: Anthropic provider](https://strandsagents.com/latest/documentation/docs/user-guide/concepts/model-providers/anthropic/), [Strands: MCP tools](https://strandsagents.com/latest/documentation/docs/user-guide/concepts/tools/mcp-tools/), and the Agent Toolkit `amazon-bedrock` skill (`references/agentcore-harness.md`).

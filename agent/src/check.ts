@@ -36,7 +36,7 @@ const CASES: Case[] = [
   },
   {
     question: "What's the security deposit return deadline in Washington DC?",
-    mustMatch: [/not covered/i],
+    mustMatch: [/\b(not|isn't|is not|aren't)\s+covered\b/i],
     mustNotMatch: [/\b\d+\s*(business\s+)?days\b/i],
     tools: /get_deposit_rules/,
   },

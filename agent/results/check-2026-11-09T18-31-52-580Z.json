@@ -1,0 +1,57 @@
+{
+  "model": "claude-sonnet-5-5",
+  "passed": 5,
+  "total": 5,
+  "results": [
+    {
+      "question": "What's the deposit return deadline in Washington?",
+      "pass": true,
+      "failures": [],
+      "tools": [
+        "deposit-laws___get_deposit_rules"
+      ],
+      "seconds": 6.011,
+      "answer": "In Washington, the landlord has **30 days after the tenancy ends and the tenant moves out** to deliver the refund. Within that same 30 days, the landlord must also send the retention statement and supporting documentation. The deadline used to be 21 days. It changed to 30 in July 2023.\n\nIf the landlord is late, they can owe the full deposit. For intentional refusal, a court can award up to 2x the deposit. The prevailing party also recovers attorney's fees.\n\nSource: https://propinspect.net/security-deposit-laws/washington (last reviewed 2026-08-27; Washington Revised Code §§ 59.18.260–.280).\n\nThis is general information, not legal advice."
+    },
+    {
+      "question": "What's the most a landlord in Nevada can charge as a security deposit?",
+      "pass": true,
+      "failures": [],
+      "tools": [
+        "deposit-laws___get_deposit_rules"
+      ],
+      "seconds": 5.374,
+      "answer": "In Nevada, a landlord can charge at most **3 months' rent** in total security. The cap covers all security combined: deposits under any label, any surety bond, and prepaid last month's rent.\n\nSource: https://propinspect.net/security-deposit-laws/nevada (last reviewed 2026-10-12; Nevada Revised Statutes § 118A.242).\n\nThis is general information, not legal advice."
+    },
+    {
+      "question": "Compare the deposit return deadlines in California and Texas.",
+      "pass": true,
+      "failures": [],
+      "tools": [
+        "deposit-laws___compare_states"
+      ],
+      "seconds": 6.395,
+      "answer": "**Deposit return deadlines**\n\n- **California:** The landlord has 21 days after the tenant vacates and returns possession. (California Civil Code § 1950.5)\n- **Texas:** The landlord has 30 days after the tenant surrenders the premises. The refund depends on the tenant giving a forwarding address. (Texas Property Code §§ 92.101–92.111)\n\nCalifornia's deadline is 9 days shorter than Texas's.\n\n**Sources:**\n- California: https://propinspect.net/security-deposit-laws/california (last reviewed 2026-08-28)\n- Texas: https://propinspect.net/security-deposit-laws/texas (last reviewed 2026-08-28)\n\nThis is general information, not legal advice."
+    },
+    {
+      "question": "Which states can you answer deposit questions for?",
+      "pass": true,
+      "failures": [],
+      "tools": [
+        "deposit-laws___list_covered_states"
+      ],
+      "seconds": 6.35,
+      "answer": "I can answer deposit questions for all 50 states:\n\nAK, AL, AR, AZ, CA, CO, CT, DE, FL, GA, HI, IA, ID, IL, IN, KS, KY, LA, MA, MD, ME, MI, MN, MO, MS, MT, NC, ND, NE, NH, NJ, NM, NV, NY, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VA, VT, WA, WI, WV, WY\n\nReview dates run from 2026-08-27 to 2026-10-12. The list didn't include per-state guide links. Those come with each state's rules when you ask about it.\n\nYou can ask about one state, or compare 2 to 6 states at once. I can cover deposit caps, return deadlines, penalties for wrongful withholding, and move-in condition records.\n\nThis is general information, not legal advice."
+    },
+    {
+      "question": "What's the security deposit return deadline in Washington DC?",
+      "pass": true,
+      "failures": [],
+      "tools": [
+        "deposit-laws___get_deposit_rules"
+      ],
+      "seconds": 5.439,
+      "answer": "Washington, DC isn't covered. The tool only covers the 50 US states, so I can't give you the return deadline for DC.\n\nFor DC's rules, check the District's official sources or ask a local landlord-tenant attorney. I can look up any of the 50 states if you'd like.\n\nThis is general information, not legal advice."
+    }
+  ]
+}
